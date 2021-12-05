@@ -68,8 +68,7 @@ const AccountButton = ({ handleOpenModal } : Props) => {
         borderRadius="xl"
         border="1px solid transparent"
         _hover={{
-            borderColor: "blue.400",
-            backgroundColor: "gray.700",
+            borderColor: "blue.400"
         }}>
       Connect to a wallet
     </Button>
@@ -82,7 +81,5 @@ export default AccountButton;
 
 const ErrorWrapper = styled.div`
   color: #ff3960;
-  margin-right: 40px;
-  margin-left: 40px;
   overflow: auto;
 `

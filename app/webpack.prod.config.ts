@@ -4,6 +4,7 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import ESLintPlugin from "eslint-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 
 const config: Configuration = {
   mode: "production",
@@ -37,6 +38,14 @@ const config: Configuration = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "src/index.html",
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'src/assets/images/favicon.ico',
+          to: 'favicon.ico',
+        },
+      ],
     }),
     new ForkTsCheckerWebpackPlugin({
       async: false,

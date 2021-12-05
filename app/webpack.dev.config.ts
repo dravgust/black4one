@@ -3,6 +3,7 @@ import { Configuration, HotModuleReplacementPlugin } from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import ESLintPlugin from "eslint-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 
 const config: Configuration = {
   mode: "development",
@@ -34,6 +35,14 @@ const config: Configuration = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "src/index.html",
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'src/assets/images/favicon.ico',
+          to: 'favicon.ico',
+        },
+      ],
     }),
     new HotModuleReplacementPlugin(),
     new ForkTsCheckerWebpackPlugin({
