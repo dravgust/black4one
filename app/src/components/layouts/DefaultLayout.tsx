@@ -6,18 +6,35 @@ import AccountModal from "../account/AccountModal";
 
 type Props = {
   children?: ReactNode;
+  href?: string;
 };
+
+const MenuItems = ({ children, href }: Props) => (
+  <Box as="a" href={href} mt={{ base: 4, md: 0 }} mr={6} display="block">
+    {children}
+  </Box>
+);
 
 const ChakraLayout = ({ children }: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex flexDirection="column" justifyContent="center" h="100vh" bg="gray.800">
-      <Flex>
-        <Box p="4">
+      <Flex p="4">
+        <Box>
           <Heading size="md" color="gray.400">black4one</Heading>
         </Box>
         <Spacer />
-        <Box p="4">
+        <Box
+            display="flex"
+            width="auto"
+            flexGrow={1}
+            color="white"
+            size="md"
+          >
+            <MenuItems href="/">Home</MenuItems>
+          </Box>
+        <Spacer />
+        <Box>
           <AccountButton handleOpenModal={onOpen} />
           <AccountModal isOpen={isOpen} onClose={onClose} />
         </Box>
