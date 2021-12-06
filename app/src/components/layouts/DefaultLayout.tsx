@@ -31,7 +31,12 @@ const ChakraLayout = ({ children }: Props) => {
             color="white"
             size="md"
           >
-            <MenuItems href="/">Home</MenuItems>
+            <MenuItems href="/">Balance</MenuItems>
+            <MenuItems href="/prices">Prices</MenuItems>
+            <MenuItems href="/block">Block</MenuItems>
+            <MenuItems href="/tokens">Tokens</MenuItems>
+            <MenuItems href="/send">Send Ether</MenuItems>
+            <MenuItems href="/transactions">Transactions</MenuItems>
           </Box>
         <Spacer />
         <Box>
