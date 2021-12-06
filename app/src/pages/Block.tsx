@@ -15,7 +15,7 @@ export function Block() {
       <Container>
         <Section>
           <SectionRow>
-            <Title style={{ color: "white" }}>Balance</Title>
+            <Title>Balance</Title>
           </SectionRow>
           <ContentBlock>
             <ContentRow>

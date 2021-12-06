@@ -10,7 +10,7 @@ export const SendEtherPage = () => {
       <Container>
         <Section>
           <SectionRow>
-            <Title style={{color:"white"}}>Send Ether</Title>
+            <Title>Send Ether</Title>
           </SectionRow>
           <SendEthForm />
         </Section>

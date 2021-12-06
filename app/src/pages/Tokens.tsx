@@ -11,7 +11,7 @@ export function Tokens() {
       <Container>
         <Section>
           <SectionRow>
-            <Title style={{color:"white"}}>Tokens</Title>
+            <Title>Tokens</Title>
           </SectionRow>
           <TokensContentBlock>
             <TokenList />

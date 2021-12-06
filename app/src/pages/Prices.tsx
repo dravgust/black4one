@@ -17,7 +17,7 @@ const Prices = () => {
             <Container>
                 <Section>
                     <SectionRow>
-                        <Title style={{color:"white"}}>Prices</Title>
+                        <Title>Prices</Title>
                     </SectionRow>
                     <ContentBlock>
                         {etherPrice && (
