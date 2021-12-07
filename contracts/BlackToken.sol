@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 contract BlackToken is ERC20, ERC20Permit, ERC20Votes {
     uint public INITIAL_SUPPLY = 10000;
-    constructor() ERC20("BlackToken", "BLT") ERC20Permit("BlackToken"){
+    constructor() ERC20("Black One", "BONE") ERC20Permit("Black One"){
         _mint(msg.sender, INITIAL_SUPPLY);
     }
 
