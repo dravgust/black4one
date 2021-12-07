@@ -40,7 +40,7 @@ const AccountButton = ({ handleOpenModal } : Props) => {
         py="0"
     >
     <Box px="3">
-        <Text fontSize="md">
+        <Text fontSize="md" whiteSpace="nowrap">
           {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
         </Text>
       </Box>

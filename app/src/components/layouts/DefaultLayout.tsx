@@ -36,6 +36,10 @@ const NavLink = ({ children, href }: NavLinkProps) => (
             py={2}
             rounded={'xl'}
             border="1px solid transparent"
+            overflow="hidden"
+            whiteSpace="nowrap"
+            textOverflow="ellipsis"
+            maxWidth="120px"
             _hover={{
                 textDecoration: 'none',
                 borderColor: "blue.400",
@@ -61,7 +65,7 @@ const ChakraLayout = ({ children }: Props) => {
                         onClick={isOpen ? onClose : onOpen}
                     />
                     <HStack spacing={8} alignItems={'center'}>
-                        <Box>black4one</Box>
+                    <Box>black4one</Box>
                         <HStack
                             as={'nav'}
                             spacing={4}
