@@ -58,7 +58,7 @@ const AccountButton = ({ handleOpenModal } : Props) => {
         m="1px"
         px={3}
         height="38px">
-        <Text color="white" fontSize="md" fontWeight="medium" mr="2">
+        <Text fontSize="md" fontWeight="medium" mr="2">
           {account && (ens ?? shortenAddress(account))}
         </Text>
         <Identicon />
