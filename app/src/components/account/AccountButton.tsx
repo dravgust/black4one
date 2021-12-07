@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Box, Text } from "@chakra-ui/react";
+import { Button, Box, Text, useColorModeValue } from "@chakra-ui/react";
 import { useEthers, useEtherBalance, shortenAddress, useLookupAddress } from "@usedapp/core";
 import { formatEther } from '@ethersproject/units'
 import Identicon from "./IdentIcon";
@@ -16,6 +16,10 @@ const AccountButton = ({ handleOpenModal } : Props) => {
 
   const [activateError, setActivateError] = useState('')
   const { error } = useEthers()
+
+  const bg700 = useColorModeValue('gray.200', 'gray.700')
+  const bg800 = useColorModeValue('gray.300', 'gray.800')
+
   useEffect(() => {
     if (error) {
       setActivateError(error.message)
@@ -31,24 +35,24 @@ const AccountButton = ({ handleOpenModal } : Props) => {
     <Box
         display="flex"
         alignItems="center"
-        background="gray.700"
+        background={bg700}
         borderRadius="xl"
         py="0"
     >
     <Box px="3">
-        <Text color="white" fontSize="md">
+        <Text fontSize="md">
           {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
         </Text>
       </Box>
       <Button
         onClick={handleOpenModal}
-        bg="gray.800"
+        bg={bg800}
         border="1px solid transparent"
         _hover={{
           border: "1px",
           borderStyle: "solid",
           borderColor: "blue.400",
-          backgroundColor: "gray.700",
+          backgroundColor: {bg700},
         }}
         borderRadius="xl"
         m="1px"
@@ -63,11 +67,11 @@ const AccountButton = ({ handleOpenModal } : Props) => {
   ) : (
       <>
     <Button onClick={handleConnectWallet}
-        bg="gray.700"
-        color="white"
-        borderRadius="xl"
+        bg={bg700}
+        rounded={'xl'}
         border="1px solid transparent"
         _hover={{
+          textDecoration: 'none',
             borderColor: "blue.400"
         }}>
       Connect to a wallet
