@@ -105,7 +105,7 @@ const TokenIconContainer = styled.div`
   width: 48px;
   height: 48px;
   padding: 1px;
-  font-size: 36px;
+  font-size: 45px;
   line-height: 36px;
   border: 1px solid ${Colors.Gray[300]};
   border-radius: 50%;

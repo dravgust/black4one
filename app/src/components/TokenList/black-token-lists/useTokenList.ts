@@ -24,10 +24,10 @@ const tokens : TokenInfo[] = [
     {
         "chainId": 1337,
         "address": "0x9A9e71AB75e067F3a1FBdD3CFbcF4c6D66DAC570",
-        "name": "BlackOne",
+        "name": "Blackone",
         "symbol": "BONE",
-        "decimals": 18,
-        "logoURI": ""
+        "decimals": 0,
+        "logoURI": "#"
       },
 ]
 
@@ -37,7 +37,7 @@ export function useTokenList(tags?: string[]) {
 
     useEffect(() => {
         setTokenList({
-            name: "Black Default List",
+            name: "Blackone Default List",
             logoURI: "",
             tokens: (tokens as TokenInfo[]).filter((token) => {
               const sameChainId = token.chainId === chainId

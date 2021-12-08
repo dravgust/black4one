@@ -9,7 +9,7 @@ export function TokenIcon({ src, alt }: { src: string; alt: string }) {
     return (
       <>
         {isIconError ? (
-          '🤷‍♂️'
+          '☣️'
         ) : (
           <Icon
             src={toHttpPath(src)}

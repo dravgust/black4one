@@ -65,7 +65,7 @@ const ChakraLayout = ({ children }: Props) => {
                         onClick={isOpen ? onClose : onOpen}
                     />
                     <HStack spacing={8} alignItems={'center'}>
-                    <Box>black4one</Box>
+                        <Box textTransform="uppercase" fontWeight="bold">black4one</Box>
                         <HStack
                             as={'nav'}
                             spacing={4}
