@@ -18,15 +18,15 @@
  *
  */
 
- const path = require("path");
- const HDWalletProvider = require('@truffle/hdwallet-provider');
- const infuraKey = "17d71eefd03c45308bbcd99033962e59";
+const path = require("path");
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const infuraKey = "17d71eefd03c45308bbcd99033962e59";
 
- const fs = require('fs');
- const mnemonic = fs.readFileSync(".secret").toString().trim();
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, "app/src/contracts"),
+  //contracts_build_directory: path.join(__dirname, "app/src/contracts"),
   /**
    * Networks define how you connect to your ethereum client and let you set the
    * defaults web3 uses to send transactions. If you don't specify one truffle
@@ -44,11 +44,11 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-     development: {
+    development: {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
-     },
+    },
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port
@@ -86,13 +86,13 @@ module.exports = {
     solc: {
       version: "0.8.10",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-       settings: {          // See the solidity docs for advice about optimization and evmVersion
+      settings: {          // See the solidity docs for advice about optimization and evmVersion
         optimizer: {
           enabled: true,
           runs: 1
         },
-      //  evmVersion: "byzantium"
-       }
+        //  evmVersion: "byzantium"
+      }
     }
   },
 
@@ -107,13 +107,13 @@ module.exports = {
   // $ truffle migrate --reset --compile-all
   //
   // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
+  // enabled: false,
+  // host: "127.0.0.1",
+  // adapter: {
+  //   name: "sqlite",
+  //   settings: {
+  //     directory: ".db"
+  //   }
+  // }
   // }
 };
