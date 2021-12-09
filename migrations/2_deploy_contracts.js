@@ -3,8 +3,8 @@
 //const ComplexStorage = artifacts.require("ComplexStorage");
 //const ApocalypseDesign = artifacts.require("ApocalypseDesign");
 //const Counter = artifacts.require("Counter");
-var ERC20MinerReward = artifacts.require("ERC20MinerReward");
-
+//var ERC20MinerReward = artifacts.require("ERC20MinerReward");
+var Faucet = artifacts.require("Faucet");
 //const TimelockController = artifacts.require("TimelockController");
 //const BlackToken = artifacts.require("BlackToken");
 //const BlackGovernor = artifacts.require("BlackGovernor");
@@ -15,7 +15,8 @@ module.exports = function(deployer) {
   //deployer.deploy(ComplexStorage);
   //deployer.deploy(ApocalypseDesign);
   //deployer.deploy(Counter);
-  deployer.deploy(ERC20MinerReward);
+  //deployer.deploy(ERC20MinerReward);
+  deployer.deploy(Faucet);
 
   //const minDelay = 0;
   //const proposers = ["0x1192aAa5F07ABD4F23939A1219a7165230D035d3"];
