@@ -23,7 +23,7 @@ interface TokenList {
 const tokens : TokenInfo[] = [
     {
         "chainId": 1337,
-        "address": "0x09C66C41B215d9D1662948D60DaC91B2dD737c54",
+        "address": "0x035c8092dF72B3b8FDcFf24b8671F8cd7C6C9D58",
         "name": "Blackone",
         "symbol": "BONE",
         "decimals": 0,
