@@ -3,29 +3,33 @@
 //const ComplexStorage = artifacts.require("ComplexStorage");
 //const ApocalypseDesign = artifacts.require("ApocalypseDesign");
 //const Counter = artifacts.require("Counter");
-//var ERC20MinerReward = artifacts.require("ERC20MinerReward");
-var Faucet = artifacts.require("Faucet");
+//const ERC20MinerReward = artifacts.require("ERC20MinerReward");
 //const TimelockController = artifacts.require("TimelockController");
-//const BlackToken = artifacts.require("BlackToken");
+const BlackToken = artifacts.require("BlackToken");
+const BlackFaucet = artifacts.require("BlackFaucet");
 //const BlackGovernor = artifacts.require("BlackGovernor");
 
-module.exports = function(deployer) {
+module.exports = function(deployer, network, accounts) {
+  console.log("network", network);
+  console.log("accounts", accounts);
+  
+  const owner = accounts[0];
+  //const minDelay = 0;
+  //const proposers = accounts;
+  //const executors = accounts;
+
   //deployer.deploy(SimpleStorage);
   //deployer.deploy(TutorialToken);
   //deployer.deploy(ComplexStorage);
   //deployer.deploy(ApocalypseDesign);
   //deployer.deploy(Counter);
   //deployer.deploy(ERC20MinerReward);
-  deployer.deploy(Faucet);
 
-  //const minDelay = 0;
-  //const proposers = ["0x1192aAa5F07ABD4F23939A1219a7165230D035d3"];
-  //const executors = ["0x1192aAa5F07ABD4F23939A1219a7165230D035d3"];
-
-  //deployer.deploy(BlackToken)
-    //.then(() => BlackToken.deployed())
+  deployer.deploy(BlackToken, {from: owner})
+    .then(() => BlackToken.deployed())
+    .then(() => deployer.deploy(BlackFaucet, BlackToken.address, owner))
     //.then(() => deployer.deploy(TimelockController, minDelay, proposers, executors))
     //.then(() => TimelockController.deployed())
     //.then(() => deployer.deploy(BlackGovernor, BlackToken.address, TimelockController.address))
-  //;
+  ;
 };
