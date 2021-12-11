@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Button, Box, Text, useColorModeValue } from "@chakra-ui/react";
-import { useEthers, useEtherBalance, shortenAddress, useLookupAddress } from "@usedapp/core";
+import { useEthers, useEtherBalance, shortenAddress, useLookupAddress, ChainId as ChainNames } from "@usedapp/core";
 import { formatEther } from '@ethersproject/units'
 import Identicon from "./IdentIcon";
 import styled from 'styled-components'
 
 type Props = {
-    handleOpenModal(): void;
-  };
+  handleOpenModal(): void;
+};
 
-const AccountButton = ({ handleOpenModal } : Props) => {
-  const {activateBrowserWallet, account } = useEthers();
+const AccountButton = ({ handleOpenModal }: Props) => {
+  const { activateBrowserWallet, account, error, chainId } = useEthers();
   const ens = useLookupAddress()
   const etherBalance = useEtherBalance(account);
 
   const [activateError, setActivateError] = useState('')
-  const { error } = useEthers()
 
   const bg700 = useColorModeValue('gray.200', 'gray.700')
   const bg800 = useColorModeValue('gray.300', 'gray.800')
@@ -32,41 +31,52 @@ const AccountButton = ({ handleOpenModal } : Props) => {
   }
 
   return account ? (
-    <Box
+    <>
+      {chainId &&
+        <Box display="flex"
+          alignItems="center"
+          background={bg700}
+          borderRadius="xl"
+          py="0">
+          <Text fontSize="md" px="3">{ChainNames[chainId]}</Text>
+        </Box>
+      }
+      <Box
         display="flex"
         alignItems="center"
         background={bg700}
         borderRadius="xl"
         py="0"
-    >
-    <Box px="3">
-        <Text fontSize="md" whiteSpace="nowrap">
-          {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
-        </Text>
+      >
+        <Box px="3">
+          <Text fontSize="md" whiteSpace="nowrap">
+            {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
+          </Text>
+        </Box>
+        <Button
+          onClick={handleOpenModal}
+          bg={bg800}
+          border="1px solid transparent"
+          _hover={{
+            border: "1px",
+            borderStyle: "solid",
+            borderColor: "blue.400",
+            backgroundColor: { bg700 },
+          }}
+          borderRadius="xl"
+          m="1px"
+          px={3}
+          height="38px">
+          <Text fontSize="md" fontWeight="medium" mr="2">
+            {account && (ens ?? shortenAddress(account))}
+          </Text>
+          <Identicon />
+        </Button>
       </Box>
-      <Button
-        onClick={handleOpenModal}
-        bg={bg800}
-        border="1px solid transparent"
-        _hover={{
-          border: "1px",
-          borderStyle: "solid",
-          borderColor: "blue.400",
-          backgroundColor: {bg700},
-        }}
-        borderRadius="xl"
-        m="1px"
-        px={3}
-        height="38px">
-        <Text fontSize="md" fontWeight="medium" mr="2">
-          {account && (ens ?? shortenAddress(account))}
-        </Text>
-        <Identicon />
-      </Button>
-    </Box>
+    </>
   ) : (
-      <>
-    <Button onClick={handleConnectWallet}
+    <>
+      <Button onClick={handleConnectWallet}
         bg={bg700}
         rounded={'xl'}
         border="1px solid transparent"
@@ -74,9 +84,9 @@ const AccountButton = ({ handleOpenModal } : Props) => {
           textDecoration: 'none',
           borderColor: "blue.400"
         }}>
-      Connect to a wallet
-    </Button>
-    <ErrorWrapper>{activateError}</ErrorWrapper>
+        Connect to a wallet
+      </Button>
+      <ErrorWrapper>{activateError}</ErrorWrapper>
     </>
   );
 }

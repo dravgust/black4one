@@ -84,8 +84,8 @@ export const ContentBlock = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  #background-color: ${Colors.White};
-  border-radius: ${BorderRad.s};
+  #background-color: ${Colors.Gray[800]};
+  border-radius: ${BorderRad.m};
   #box-shadow: ${Shadows.main};
   padding: 32px 32px;
 `
