@@ -2,6 +2,7 @@
 //const TutorialToken = artifacts.require("TutorialToken");
 //const ComplexStorage = artifacts.require("ComplexStorage");
 const BlackDeedRepository = artifacts.require("BlackDeedRepository");
+const BlackAuctionRepository = artifacts.require("BlackAuctionRepository");
 //const Counter = artifacts.require("Counter");
 //const ERC20MinerReward = artifacts.require("ERC20MinerReward");
 //const TimelockController = artifacts.require("TimelockController");
@@ -22,6 +23,7 @@ module.exports = function(deployer, network, accounts) {
   //deployer.deploy(TutorialToken);
   //deployer.deploy(ComplexStorage);
   deployer.deploy(BlackDeedRepository);
+  deployer.deploy(BlackAuctionRepository);
   //deployer.deploy(Counter);
   //deployer.deploy(ERC20MinerReward);
 
