@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { DAppProvider } from '@usedapp/core'
-import { config } from './ethersOptions'
+import Config from './config'
 import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DAppProvider config={config}>
+    <DAppProvider config={Config.DAPP_CONFIG}>
       <App />
     </DAppProvider>
   </React.StrictMode>,

@@ -30,6 +30,7 @@ const Links = [
     { name: 'Faucet', href: '/faucet' },
     { name: 'Send Ethers', href: '/send' },
     { name: 'Transactions', href: '/transactions' },
+    { name: 'Auction', href: '/auction' },
 ];
 
 const NavLink = ({ children, href, active }: NavLinkProps) => (

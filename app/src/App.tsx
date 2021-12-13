@@ -10,6 +10,7 @@ import { Tokens } from './pages/Tokens';
 import { SendEtherPage } from './pages/SendEtherPage';
 import { Transactions } from './pages/Transactions';
 import BlackFaucet from './pages/BlackFaucet';
+import Auction from './pages/Auction';
 
 
 const App = () => (
@@ -24,6 +25,7 @@ const App = () => (
                 <Route path='/faucet' element={<BlackFaucet />} />
                 <Route path='/send' element={<SendEtherPage />} />
                 <Route path='/transactions' element={<Transactions />} />
+                <Route path='/auction' element={<Auction />} />
             </Routes>
         </BrowserRouter>
     </ChakraProvider>
