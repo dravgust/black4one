@@ -74,9 +74,9 @@ const DefaultLayout = ({ children }: Props) => {
     const bg700 = useColorModeValue('gray.200', 'gray.700')
 
     useEffect(() => {
-        console.log(`path: ${pathname}`);
+        console.log(`[DefaultLayout] mount ${pathname}`);
         return () => {
-            console.log(`Unmounted`);
+            console.log(`[DefaultLayout] unmount ${pathname}`);
         };
     }, [pathname])
 

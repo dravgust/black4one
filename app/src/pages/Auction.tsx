@@ -3,14 +3,15 @@ import DefaultLayout from "../components/layouts/DefaultLayout";
 //import { Box } from "@chakra-ui/react"
 import { Container, Section, SectionRow } from '../components/base/base'
 import { Title } from '../typography/Title'
-import useAuctionRepository from '../models/useAuctionRepository'
-import { Flex, Text, Button, Box } from "@chakra-ui/react";
-import useDeedRepository from "../models/useDeedRepository";
+//import useAuctionRepository from '../models/useAuctionRepository'
+//import { Flex, Text, Button, Box } from "@chakra-ui/react";
+//import useDeedRepository from "../models/useDeedRepository";
+import { DeedRepositoryForm } from "../components/BlackAuction/DeedRepositoryForm";
 
 const Auction = () => {
 
-    const { stateGetCount, create } = useAuctionRepository();
-    const { create: createDeed } = useDeedRepository();
+    //const { stateGetCount, create } = useAuctionRepository();
+    //const { create: createDeed } = useDeedRepository();
     //console.log(Date.now() + 1000 * 60 * 3); 3 min
     return (
         <DefaultLayout>
@@ -19,7 +20,10 @@ const Auction = () => {
                     <SectionRow>
                         <Title>Auction</Title>
                     </SectionRow>
-                    <Flex direction="row" align="center" mt="4" justifyContent={'space-between'}>
+
+                    <DeedRepositoryForm/>
+
+                    {/*<Flex direction="row" align="center" mt="4" justifyContent={'space-between'}>
                         <Flex direction="column">
                             <Box p="4" mb={2} background="gray.700" borderRadius="xl" width="300px" height="200px" textAlign="center">
                                 <Text color={"white"} fontSize={"8xl"}>
@@ -36,11 +40,11 @@ const Auction = () => {
                                     {stateGetCount?.toNumber()}
                                 </Text>
                             </Box>
-                            <Button colorScheme="teal" size="lg" onClick={() => create(1, "test auction", "test metadata", 1, Date.now() + 60 * 5)}>
+                            <Button colorScheme="teal" size="lg" onClick={() => create(1, "test auction", "test metadata", 1, (Date.now() / 1000) + 60 * 5)}>
                                 Create Auction
                             </Button>
                         </Flex>
-                    </Flex>
+    </Flex>*/}
                 </Section>
             </Container>
         </DefaultLayout>
