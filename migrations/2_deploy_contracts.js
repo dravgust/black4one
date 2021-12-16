@@ -22,7 +22,7 @@ module.exports = function(deployer, network, accounts) {
   //deployer.deploy(SimpleStorage);
   //deployer.deploy(TutorialToken);
   //deployer.deploy(ComplexStorage);
-  deployer.deploy(BlackDeedRepository);
+  deployer.deploy(BlackDeedRepository, "BlackRepository", "BREP");
   deployer.deploy(BlackAuctionRepository);
   //deployer.deploy(Counter);
   //deployer.deploy(ERC20MinerReward);

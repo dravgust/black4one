@@ -52,7 +52,7 @@ contract BlackAuctionRepository {
     * @param auctionId uint ID of the auction to validate its ownership belongs to msg.sender
     */
     modifier isOwner(uint auctionId) {
-        require(auctions[auctionId].owner == msg.sender);
+        require(auctions[auctionId].owner == msg.sender, "REPO: the sender is not owner of the given action");
         _;
     }
 
@@ -63,7 +63,7 @@ contract BlackAuctionRepository {
     */
     modifier contractIsDeedOwner(address deedRepositoryAddress, uint256 deedId) {
         address deedOwner = BlackDeedRepository(deedRepositoryAddress).ownerOf(deedId);
-        require(deedOwner == address(this));
+        require(deedOwner == address(this), "REPO: this contract is not owner of the given deed/token");
         _;
     }
 
@@ -71,7 +71,7 @@ contract BlackAuctionRepository {
     * @dev Disallow payments to this contract directly
     */
     fallback()  external {
-        revert();
+        revert("REPO: payments to this contract directly are not allowed");
     }
 
     /**
@@ -211,7 +211,7 @@ contract BlackAuctionRepository {
         if( bidsLength > 0 ) {
             Bid memory lastBid = auctionBids[auctionId][bidsLength - 1];
             if(!lastBid.from.send(lastBid.amount)) {
-                revert();
+                revert("REPO: Err on refund the last bidder");
             }
         }
 
@@ -221,6 +221,10 @@ contract BlackAuctionRepository {
             emit AuctionCanceled(msg.sender, auctionId);
         }
     }
+
+    /**
+    auction not ended
+     */
 
     /**
     * @dev Finalized an ended auction
@@ -233,7 +237,7 @@ contract BlackAuctionRepository {
         uint bidsLength = auctionBids[auctionId].length;
 
         // 1. if auction not ended just revert
-        if( block.timestamp < myAuction.blockDeadline ) revert();
+        if( block.timestamp < myAuction.blockDeadline ) revert("REPO: auction not ended");
         
         // if there are no bids cancel
         if(bidsLength == 0) {
@@ -243,7 +247,7 @@ contract BlackAuctionRepository {
             // 2. the money goes to the auction owner
             Bid memory lastBid = auctionBids[auctionId][bidsLength - 1];
             if(!myAuction.owner.send(lastBid.amount)) {
-                revert();
+                revert("REPO: Err on sending money to the auction owner");
             }
 
             // approve and transfer from this contract to the bid winner 
@@ -266,10 +270,10 @@ contract BlackAuctionRepository {
 
         // owner can't bid on their auctions
         Auction memory myAuction = auctions[auctionId];
-        if(myAuction.owner == msg.sender) revert();
+        if(myAuction.owner == msg.sender) revert("REPO: owner can't bid on their auctions");
 
         // if auction is expired
-        if( block.timestamp > myAuction.blockDeadline ) revert();
+        if(block.timestamp > myAuction.blockDeadline ) revert("REPO: auction is expired");
 
         uint bidsLength = auctionBids[auctionId].length;
         uint256 tempAmount = myAuction.startPrice;
@@ -282,12 +286,12 @@ contract BlackAuctionRepository {
         }
 
         // check if amound is greater than previous amount  
-        if( ethAmountSent < tempAmount ) revert(); 
+        if( ethAmountSent < tempAmount ) revert("REPO: amound is smaller than previous amount"); 
 
         // refund the last bidder
         if( bidsLength > 0 ) {
             if(!lastBid.from.send(lastBid.amount)) {
-                revert();
+                revert("REPO: Err on refund the last bidder");
             }  
         }
 
