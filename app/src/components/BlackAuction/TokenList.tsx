@@ -3,7 +3,7 @@ import { VStack, Box, Flex, Text, Heading } from "@chakra-ui/react"
 import { useColorModeValue } from "@chakra-ui/react"
 import { TokenCard } from "./TokenCard";
 
-const Tokens = [{ name: "1" }, { name: "2" }, { name: "3" }]
+const Tokens = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }]
 
 const TokenList = () => {
 

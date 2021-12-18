@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react"
-import { chakra, Image, Flex, Box, useColorModeValue } from "@chakra-ui/react"
+import { chakra, Flex, Box, useColorModeValue } from "@chakra-ui/react"
 
 
 type TokenCardProps = {
@@ -7,71 +7,80 @@ type TokenCardProps = {
 };
 
 export const TokenCard = ({ children }: TokenCardProps) => (
-    <Box
-        maxW="xs"
+    <Flex
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        w="sm"
         mx="auto"
         mb={5}
-        bg={useColorModeValue("white", "gray.800")}
-        shadow="lg"
-        rounded="lg"
-    >
-        <Box px={4} py={2}>
-            <chakra.h1
-                color={useColorModeValue("gray.800", "white")}
-                fontWeight="bold"
-                fontSize="3xl"
-                textTransform="uppercase"
-            >
-                {children}
-            </chakra.h1>
-            <chakra.p
-                mt={1}
-                fontSize="sm"
-                color={useColorModeValue("gray.600", "gray.400")}
-            >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi quos
-                quidem sequi illum facere recusandae voluptatibus
-            </chakra.p>
-        </Box>
+      >
+        <Box
+          bg="gray.300"
+          h={64}
+          w="full"
+          rounded="lg"
+          shadow="md"
+          bgSize="cover"
+          bgPos="center"
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1521903062400-b80f2cb8cb9d?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80)",
+          }}
+        ></Box>
 
-        <Image
-            h={48}
-            w="full"
-            fit="cover"
-            mt={2}
-            src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=320&q=80"
-            alt="NIKE AIR"
-        />
+        <Box
+          w={{ base: 56, md: 64 }}
+          bg={useColorModeValue("white", "gray.800")}
+          mt={-10}
+          shadow="lg"
+          rounded="lg"
+          overflow="hidden"
+        >
+          <chakra.h3
+            py={2}
+            textAlign="center"
+            fontWeight="bold"
+            textTransform="uppercase"
+            color={useColorModeValue("gray.800", "white")}
+            letterSpacing={1}
+          >
+           {children}
+          </chakra.h3>
 
-        <Flex
+          <Flex
             alignItems="center"
             justifyContent="space-between"
-            px={4}
             py={2}
-            bg="gray.900"
-            roundedBottom="lg"
-        >
-            <chakra.h1 color="white" fontWeight="bold" fontSize="lg">
-                $129
-            </chakra.h1>
-            <chakra.button
-                px={2}
-                py={1}
-                bg="white"
-                fontSize="xs"
-                color="gray.900"
-                fontWeight="bold"
-                rounded="lg"
-                textTransform="uppercase"
-                _hover={{
-                    bg: "gray.200",
-                }}
-                _focus={{
-                    bg: "gray.400",
-                }}
+            px={3}
+            bg={useColorModeValue("gray.200", "gray.700")}
+          >
+            <chakra.span
+              fontWeight="bold"
+              color={useColorModeValue("gray.800", "gray.200")}
             >
-                Add to cart
+              $129
+            </chakra.span>
+            <chakra.button
+              bg="gray.800"
+              fontSize="xs"
+              fontWeight="bold"
+              color="white"
+              px={2}
+              py={1}
+              rounded="lg"
+              textTransform="uppercase"
+              _hover={{
+                bg: useColorModeValue("gray.700", "gray.600"),
+              }}
+              _focus={{
+                bg: useColorModeValue("gray.700", "gray.600"),
+                outline: "none",
+              }}
+            >
+              Add to cart
             </chakra.button>
-        </Flex>
-    </Box>
+          </Flex>
+        </Box>
+      </Flex>
 )
