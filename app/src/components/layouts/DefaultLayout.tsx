@@ -1,14 +1,12 @@
 import React, { ReactNode, useEffect } from "react";
 import { Link as RouteLink, To, useLocation } from "react-router-dom";
 import {
-    Box, Flex, HStack, Stack, Button,
-    IconButton,
+    Box, Flex, HStack, Stack, Button, SimpleGrid, GridItem,
     useDisclosure, useColorMode,
-    useColorModeValue
+    useColorModeValue, Container, Text
 } from '@chakra-ui/react';
 import AccountButton from "../account/AccountButton";
 import AccountModal from "../account/AccountModal";
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { dataAttr } from "@chakra-ui/utils";
 
@@ -37,7 +35,8 @@ const NavLink = ({ children, href, active }: NavLinkProps) => (
     <RouteLink to={href}>
         <Box
             px={4}
-            py={2}
+            py={1.5}
+            height={"40px"}
             rounded={'xl'}
             borderWidth={"1px"}
             borderColor={useColorModeValue('gray.200', 'gray.700')}
@@ -68,10 +67,9 @@ const NavLink = ({ children, href, active }: NavLinkProps) => (
 const DefaultLayout = ({ children }: Props) => {
     const { colorMode, toggleColorMode } = useColorMode();
     const { isOpen: isAccountOpen, onOpen: onAccountOpen, onClose: onAccountClose } = useDisclosure();
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const { pathname } = useLocation()
 
-    const bg700 = useColorModeValue('gray.200', 'gray.700')
+    const gray200gray700 = useColorModeValue('gray.200', 'gray.700')
 
     useEffect(() => {
         console.log(`[DefaultLayout] mount ${pathname}`);
@@ -82,23 +80,15 @@ const DefaultLayout = ({ children }: Props) => {
 
     return (
         <>
-            <Box px={4}>
-                <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-                    <IconButton
-                        size={'md'}
-                        icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-                        aria-label={'Open Menu'}
-                        display={{ md: 'none' }}
-                        onClick={isOpen ? onClose : onOpen}
-                    />
+            <Box pos="fixed" w="100vw" zIndex={9999} bg={useColorModeValue('white', 'gray.800')}>
+                <Flex h={16} px={5} alignItems={'center'} justifyContent={'space-between'}>
                     <HStack spacing={8} alignItems={'center'}>
                         <Box textTransform="uppercase" fontWeight="bold">black4one</Box>
                         <HStack
                             as={'nav'}
-                            spacing={1}
+                            spacing={0.5}
                             display={{ base: 'none', md: 'flex' }}
-                            bg={bg700}
-                            px={3}
+                            bg={gray200gray700}
                             rounded={'xl'}>
                             {Links.map((link) => (
                                 <NavLink active={pathname === link.href} key={link.name} href={link.href}>
@@ -121,19 +111,37 @@ const DefaultLayout = ({ children }: Props) => {
                         </Stack>
                     </Flex>
                 </Flex>
-                {isOpen ? (
-                    <Box pb={4} display={{ md: 'none' }}>
-                        <Stack as={'nav'} spacing={4}>
-                            {Links.map((link) => (
-                                <NavLink
-                                    active={pathname === link.href}
-                                    key={link.name} href={link.href}>{link.name}</NavLink>
-                            ))}
-                        </Stack>
-                    </Box>
-                ) : null}
             </Box>
-            <Box h="100vh"><Box>{children}</Box></Box>
+            <Box h="100vh" pt={16}>
+                <SimpleGrid
+                    display={{ base: "initial", md: "grid" }}
+                    columns={{ md: 5 }}
+                    spacing={{ md: 6 }}
+                >
+                    <GridItem colSpan={{ md: 1 }}>
+
+                    </GridItem>
+                    <GridItem px={5} mt={[5, null, 0]} colSpan={{ md: 3 }}>
+                        {children}
+                    </GridItem>
+                    <GridItem colSpan={{ md: 1 }}>
+
+                    </GridItem>
+                </SimpleGrid>
+                <Box
+                color={useColorModeValue('gray.700', 'gray.200')}>
+                <Container
+                    as={Stack}
+                    maxW={'6xl'}
+                    py={4}
+                    direction={{ base: 'column', md: 'row' }}
+                    spacing={4}
+                    justify={{ base: 'center', md: 'space-between' }}
+                    align={{ base: 'center', md: 'center' }}>
+                    <Text>© 2021 dr.@vgust. All rights reserved</Text>
+                </Container>
+            </Box>
+            </Box>       
         </>
     )
 }

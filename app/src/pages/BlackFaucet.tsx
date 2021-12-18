@@ -1,20 +1,28 @@
 import React from "react";
 import DefaultLayout from "../components/layouts/DefaultLayout";
-//import { Box } from "@chakra-ui/react"
-import { Container, Section, SectionRow } from '../components/base/base'
-import { Title } from '../typography/Title'
+import {
+    Box,
+    useColorModeValue,
+    Heading,
+    Text
+} from "@chakra-ui/react";
 
 const BlackFaucet = () => {
     return (
         <DefaultLayout>
-            <Container>
-                <Section>
-                    <SectionRow>
-                        <Title>Faucet</Title>
-                    </SectionRow>
-
-                </Section>
-            </Container>
+             <Box py={[0, 5]}>
+              <Heading fontSize="lg" fontWeight="md" lineHeight="6">
+                Faucet
+              </Heading>
+              <Text
+                mt={1}
+                fontSize="sm"
+                color={useColorModeValue("gray.600", "gray.400")}
+              >
+                ...
+              </Text>
+            </Box>
+            
         </DefaultLayout>
     );
 }
