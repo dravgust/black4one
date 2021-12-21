@@ -41,11 +41,10 @@ const FileStorageForm = () => {
 
     return (
         <>
-             <FileHeader>IPFS</FileHeader>
              <FileMain>
                 <form onSubmit={handleSubmit}>
-                    <FILEINPUT type="file" onChange={retrieveFile} />
-                <FILESUBMIT type="submit">Submit</FILESUBMIT>
+                    <FileInput type="file" onChange={retrieveFile} />
+                <FileSubmit type="submit">Submit</FileSubmit>
                 </form>
              </FileMain>    
             <FileDisplay>
@@ -60,17 +59,6 @@ const FileStorageForm = () => {
 
 export default FileStorageForm;
 
-const FileHeader = styled.div`
-    background-color: #282c34;
-    min-height: 20vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-    margin-bottom: 3rem;
-`
 const FileMain = styled.div`
     font-size: 2rem;
 `
@@ -89,12 +77,12 @@ const IMG = styled.img`
     margin: 0rem auto;
 `
 
-const FILEINPUT = styled.input`
+const FileInput = styled.input`
     padding: 0.3rem 1rem;
     border: 2px solid blueviolet;
     font-size: large;
 `
-const FILESUBMIT = styled.button`
+const FileSubmit = styled.button`
     padding: 0.5rem;
     font-size: large;
     background-color: blueviolet;
