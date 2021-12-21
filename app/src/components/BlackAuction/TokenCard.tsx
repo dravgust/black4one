@@ -20,9 +20,10 @@ export const TokenCard = ({
     direction="column"
     justifyContent="center"
     alignItems="center"
-    w="sm"
-    mx="auto"
-    mb={5}
+    //w="sm"
+    //mx="auto"
+    //mb={5}
+    mx={1}
   >
     <Box
       bg="gray.300"

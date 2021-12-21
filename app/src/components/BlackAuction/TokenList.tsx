@@ -95,7 +95,7 @@ const TokenList = ({contract}: TokenListProps) => {
           </Text>
         </Box>
         <Box>
-          <Gallery photos={tokenList} margin={5} direction={"column"} renderImage={imageRenderer} />
+          <Gallery photos={tokenList} margin={5} renderImage={imageRenderer} />
         </Box>
       </VStack>
   )
