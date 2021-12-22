@@ -23,7 +23,7 @@ export class TokenProperties {
 
 
 export class TokenMetadata {
-    public title: string = "Asset Metadata";
+    public title = "Asset Metadata";
     public properties: TokenProperties;
     
     constructor(name: string, description: string, image: string, meta = ""){

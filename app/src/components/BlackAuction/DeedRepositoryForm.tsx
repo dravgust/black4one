@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useEthers, useContractFunction } from '@usedapp/core'
-import { Formik, Form, Field, FieldProps, FormikHelpers } from "formik"
+import { Form, Field, FieldProps, FormikHelpers } from "formik"
+import FormikWithRef from "../FormikWithRef"
 import {
   chakra, FormLabel, FormErrorMessage, FormControl, Input, InputLeftAddon, InputGroup, Button, useColorModeValue, Stack, SimpleGrid, GridItem,
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
@@ -8,9 +9,9 @@ import {
 import Config from '../../config'
 import { utils } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
-import { isURI } from "../../utils";
-//import { TokenMetadata } from "../../models/DeedRepository";
-//import { create } from 'ipfs-http-client'
+import { isURI, ensureIpfsUriPrefix } from "../../utils";
+import { TokenMetadata } from "../../models/DeedRepository";
+import { create } from 'ipfs-http-client'
 
 const contractAddress = Config.DEEDREPOSITORY_ADDRESS;
 const contractAbi = Config.DEEDREPOSITORY_ABI;
@@ -22,9 +23,17 @@ interface FormValues {
   tokenURI: string
 }
 
-/*const client = create({
+interface TokenOptions {
+  path?: string,
+  name: string,
+  description: string,
+  owner?: string | null | undefined
+}
+
+const nftClient = create({
   url: 'https://ipfs.infura.io:5001/api/v0'
-})*/
+})
+
 
 export const DeedRepositoryForm = () => {
 
@@ -41,18 +50,66 @@ export const DeedRepositoryForm = () => {
 
   const { account } = useEthers()
   const [disabled, setDisabled] = useState(false)
-  const formikRef = React.createRef<FormikHelpers<FormValues>>()
+  const [file, setFile] = useState<File | null>(null)
+  const formikRef = useRef<FormikHelpers<FormValues>>()
   
   const { state, send } = useContractFunction(contract, 'registerDeed', { transactionName: 'Register Deed' });
+
+  const createNFTFromAssetData = async (content: File, options: TokenOptions) => {
+    const filePath = options.path || 'asset.bin'
+    const basename = filePath.replace(/^.*(\\|\/|\:)/, '')
+
+    const ipfsPath = '/nft/' + filePath
+    const { cid: assetCid } = await nftClient.add({path: ipfsPath, content })
+
+    const assetURI = ensureIpfsUriPrefix(assetCid) + '/' + basename
+    const metadata = new TokenMetadata(options.name, options.description, assetURI)
+
+    const { cid: metadataCid } = await nftClient.add({
+      path: '/nft/metadata.json',
+      content: JSON.stringify(metadata)
+    })
+    const metadataURI = ensureIpfsUriPrefix(metadataCid) + '/metadata.json'
+
+    let ownerAddress = options.owner
+    if(!ownerAddress){
+      ownerAddress = account
+    }
+
+    return {
+      assetURI,
+      metadataURI
+    }
+  }
 
   const onSubmit = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
     console.log("[DeedRepositoryForm] valus: ", values)
 
-    //const metadata = new TokenMetadata("TOKEN#1", "auction asset", values.tokenURI)
+    if(file != null) {
+      const { assetURI, metadataURI } = await createNFTFromAssetData(file, { path: "/token#1.jpg", name: "TOKEN#1", description: "auction asset" })
+      console.log("assetURI", assetURI)
+      console.log("metadataURI", metadataURI)
 
-    setDisabled(true)
-    send(values.tokenURI, { from: account })
+      send(metadataURI, { from: account })  
+
+      setDisabled(true)       
+    }
+
     setSubmitting(false)
+  }
+
+  const retrieveFile = (e: React.FormEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const files = (e.target as HTMLInputElement).files;
+    console.log("files", files)
+    if(files != null){
+      const file = files[0];
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(file)
+      reader.onloadend = () => {
+        setFile(file)
+      }
+    }
   }
 
   useEffect(() => {
@@ -64,7 +121,7 @@ export const DeedRepositoryForm = () => {
   }, [state])
 
   return (
-    <Formik
+    <FormikWithRef
       initialValues={{ tokenURI: '' }}
       onSubmit={onSubmit}
       ref={formikRef}
@@ -195,6 +252,7 @@ export const DeedRepositoryForm = () => {
                           id="file-upload"
                           name="file-upload"
                           type="file"
+                          onChange={retrieveFile}
                         />
                       </VisuallyHidden>
                     </chakra.label>
@@ -225,7 +283,7 @@ export const DeedRepositoryForm = () => {
           </Box>
         </Form>
       )}
-    </Formik>
+    </FormikWithRef>
 
   )
 }
