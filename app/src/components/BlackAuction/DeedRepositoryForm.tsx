@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useEthers, useContractFunction } from '@usedapp/core'
-import { Formik, Form, Field, FieldProps } from "formik"
+import { Formik, Form, Field, FieldProps, FormikHelpers } from "formik"
 import {
   chakra, FormLabel, FormErrorMessage, FormControl, Input, InputLeftAddon, InputGroup, Button, useColorModeValue, Stack, SimpleGrid, GridItem,
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
@@ -8,12 +8,23 @@ import {
 import Config from '../../config'
 import { utils } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
+import { isURI } from "../../utils";
+//import { TokenMetadata } from "../../models/DeedRepository";
+//import { create } from 'ipfs-http-client'
 
 const contractAddress = Config.DEEDREPOSITORY_ADDRESS;
 const contractAbi = Config.DEEDREPOSITORY_ABI;
 
 const contractInterface = new utils.Interface(contractAbi)
 const contract = new Contract(contractAddress, contractInterface);
+
+interface FormValues {
+  tokenURI: string
+}
+
+/*const client = create({
+  url: 'https://ipfs.infura.io:5001/api/v0'
+})*/
 
 export const DeedRepositoryForm = () => {
 
@@ -30,37 +41,33 @@ export const DeedRepositoryForm = () => {
 
   const { account } = useEthers()
   const [disabled, setDisabled] = useState(false)
+  const formikRef = React.createRef<FormikHelpers<FormValues>>()
   
   const { state, send } = useContractFunction(contract, 'registerDeed', { transactionName: 'Register Deed' });
 
-  function validateName(value: string) {
-    let error
-    if (!value) {
-      error = 'URI is required'
-    } else if (!/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(value)) {
-      error = 'URI is invalid'
-    }
-    return error
+  const onSubmit = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
+    console.log("[DeedRepositoryForm] valus: ", values)
+
+    //const metadata = new TokenMetadata("TOKEN#1", "auction asset", values.tokenURI)
+
+    setDisabled(true)
+    send(values.tokenURI, { from: account })
+    setSubmitting(false)
   }
 
   useEffect(() => {
     console.log("[DeedRepositoryForm] state: ", state);
     if (state.status != 'Mining') {
+      formikRef.current?.resetForm();
       setDisabled(false)
     }
   }, [state])
 
   return (
-
     <Formik
       initialValues={{ tokenURI: '' }}
-      onSubmit={(values, {setSubmitting, resetForm}) => {
-        console.log("[DeedRepositoryForm] value: ", values.tokenURI)
-        setDisabled(true)
-        send(values.tokenURI, { from: account })
-        resetForm()
-        setSubmitting(false)
-      }}
+      onSubmit={onSubmit}
+      ref={formikRef}
     >
       {(props) => (
         <Form>
@@ -73,7 +80,7 @@ export const DeedRepositoryForm = () => {
             roundedTop={"xl"}
           >
             <SimpleGrid columns={3} spacing={6}>
-              <Field name='tokenURI' validate={validateName}>
+              <Field name='tokenURI' validate={isURI}>
                 {({ field, form }: FieldProps<string>) => (
                   <FormControl as={GridItem} colSpan={[3, 3]} isInvalid={(form.errors.tokenURI && form.touched.tokenURI) as boolean}>
                     <FormLabel

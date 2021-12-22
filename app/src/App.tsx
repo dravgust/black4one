@@ -11,6 +11,7 @@ import { SendEtherPage } from './pages/SendEtherPage';
 import { Transactions } from './pages/Transactions';
 import BlackFaucet from './pages/BlackFaucet';
 import Auction from './pages/Auction';
+import FileStorage from './pages/FileStorage';
 
 
 const App = () => (
@@ -26,6 +27,7 @@ const App = () => (
                 <Route path='/send' element={<SendEtherPage />} />
                 <Route path='/transactions' element={<Transactions />} />
                 <Route path='/auction' element={<Auction />} />
+                <Route path='/storage' element={<FileStorage />} />
             </Routes>
         </BrowserRouter>
     </ChakraProvider>

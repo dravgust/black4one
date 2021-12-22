@@ -3,7 +3,7 @@ import { Link as RouteLink, To, useLocation } from "react-router-dom";
 import {
     Box, Flex, HStack, Stack, Button, SimpleGrid, GridItem,
     useDisclosure, useColorMode,
-    useColorModeValue, Container, Text
+    useColorModeValue, Container, Text, Heading
 } from '@chakra-ui/react';
 import AccountButton from "../account/AccountButton";
 import AccountModal from "../account/AccountModal";
@@ -29,6 +29,7 @@ const Links = [
     { name: 'Send Ethers', href: '/send' },
     { name: 'Transactions', href: '/transactions' },
     { name: 'Auction', href: '/auction' },
+    { name: 'File Storage', href: '/storage' },
 ];
 
 const NavLink = ({ children, href, active }: NavLinkProps) => (
@@ -122,6 +123,11 @@ const DefaultLayout = ({ children }: Props) => {
 
                     </GridItem>
                     <GridItem px={5} mt={[5, null, 0]} colSpan={{ md: 3 }}>
+                        <Box display={"flex"} flexDir={"column"} my={"3rem"}>
+                            <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
+                                {pathname}
+                            </Heading>
+                        </Box>
                         {children}
                     </GridItem>
                     <GridItem colSpan={{ md: 1 }}>
@@ -129,7 +135,7 @@ const DefaultLayout = ({ children }: Props) => {
                     </GridItem>
                 </SimpleGrid>
                 <Box
-                color={useColorModeValue('gray.700', 'gray.200')}>
+                    color={useColorModeValue('gray.700', 'gray.200')}>
                 <Container
                     as={Stack}
                     maxW={'6xl'}
@@ -141,7 +147,7 @@ const DefaultLayout = ({ children }: Props) => {
                     <Text>© 2021 dr.@vgust. All rights reserved</Text>
                 </Container>
             </Box>
-            </Box>       
+            </Box>
         </>
     )
 }

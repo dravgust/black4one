@@ -78,12 +78,12 @@ const TokenList = ({contract}: TokenListProps) => {
 
   return (
     <VStack
-        rounded={"xl"}
+        //rounded={"xl"}
         //bg={useColorModeValue("white", "gray.700")}
         py={5}
       >
-        <Box alignItems={'left'} w={"100%"} px={5} mb={5}>
-          <Heading fontSize="lg" fontWeight="md" lineHeight="6">
+        <Box display={"flex"} flexDir={"column"} my={"3rem"}>
+          <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
             Token List
           </Heading>
           <Text
