@@ -44,7 +44,7 @@ contract BlackDeedRepository is ERC721URIStorage {
         return newItemId;
     }
 
-    //function _baseURI() internal pure override returns (string memory) {
-    //    return "https://ipfs.io/ipfs/QmUWWYt3udWXGZ3v7kefA3CHrHWVVLuwVPUe9kWzkpHBKs?filename=apocalypse.json";
-    //}
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs://";
+    }
 }

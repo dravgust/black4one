@@ -3,13 +3,13 @@ import { useEthers, useContractFunction } from '@usedapp/core'
 import { Form, Field, FieldProps, FormikHelpers } from "formik"
 import FormikWithRef from "../FormikWithRef"
 import {
-  chakra, FormLabel, FormErrorMessage, FormControl, Input, InputLeftAddon, InputGroup, Button, useColorModeValue, Stack, SimpleGrid, GridItem,
+  chakra, FormLabel, FormErrorMessage, FormControl, Input, Button, useColorModeValue, Stack, SimpleGrid, GridItem,
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
 } from '@chakra-ui/react';
 import Config from '../../config'
 import { utils } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
-import { isURI, ensureIpfsUriPrefix } from "../../utils";
+import { isNotEmpty, ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils";
 import { TokenMetadata } from "../../models/DeedRepository";
 import { create } from 'ipfs-http-client'
 
@@ -20,7 +20,8 @@ const contractInterface = new utils.Interface(contractAbi)
 const contract = new Contract(contractAddress, contractInterface);
 
 interface FormValues {
-  tokenURI: string
+  tokenName: string
+  tokenDescription: string
 }
 
 interface TokenOptions {
@@ -34,12 +35,10 @@ const nftClient = create({
   url: 'https://ipfs.infura.io:5001/api/v0'
 })
 
-
 export const DeedRepositoryForm = () => {
 
   const gray700 = useColorModeValue("white", "gray.700")
   const gray700gray50 = useColorModeValue("gray.700", "gray.50")
-  const gray50gray800 = useColorModeValue("gray.50", "gray.800")
   const gray500gray50 = useColorModeValue("gray.500", "gay.50")
   const gray300gray500 = useColorModeValue("gray.300", "gray.500")
   const gray400gray500 = useColorModeValue("gray.400", "gray.500")
@@ -55,9 +54,32 @@ export const DeedRepositoryForm = () => {
   
   const { state, send } = useContractFunction(contract, 'registerDeed', { transactionName: 'Register Deed' });
 
+  /*const mintToken = async (ownerAddress: string, metadataURI: string) => {
+    metadataURI = stripIpfsUriPrefix(metadataURI)
+    const tx = await contract.registerDeed(metadataURI, { from: ownerAddress })
+    const receit = await tx.wait()
+    for(const event of receit.events) {
+      if(event.event !== 'DeedRegistered') {
+        console.log('ignoring unknown event type ', event.event)
+        continue
+      }
+      return event.args.tokenId.toString()
+    }
+
+    throw new Error('unable to get token id')
+  }
+
+  const defaultOwnerAddress = () : string => {
+
+    if(!account){
+      throw new Error("account is not provided")
+    }
+    return account
+  }*/
+
   const createNFTFromAssetData = async (content: File, options: TokenOptions) => {
     const filePath = options.path || 'asset.bin'
-    const basename = filePath.replace(/^.*(\\|\/|\:)/, '')
+    const basename = encodeURIComponent(filePath.replace(/^.*(\\|\/|\:)/, ''))
 
     const ipfsPath = '/nft/' + filePath
     const { cid: assetCid } = await nftClient.add({path: ipfsPath, content })
@@ -71,26 +93,41 @@ export const DeedRepositoryForm = () => {
     })
     const metadataURI = ensureIpfsUriPrefix(metadataCid) + '/metadata.json'
 
-    let ownerAddress = options.owner
-    if(!ownerAddress){
-      ownerAddress = account
-    }
+    //let ownerAddress = options.owner
+    //if(!ownerAddress){
+     // ownerAddress = defaultOwnerAddress()
+    //}
+
+    //const tokenId = await mintToken(ownerAddress, metadataURI)
 
     return {
+      //tokenId,
+      metadata,
       assetURI,
-      metadataURI
+      metadataURI,
+      ssetGatewayURL: toHttpPath(assetURI),
+      metadataGatewayURL: toHttpPath(metadataURI),
     }
   }
 
   const onSubmit = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
-    console.log("[DeedRepositoryForm] valus: ", values)
+    console.log("[DeedRepositoryForm] values: ", values)
+    console.log("[DeedRepositoryForm] file: ", file)
+    console.log("[DeedRepositoryForm] account: ", account)
+    if(file != null && account != null) {
+      const { assetURI, metadataURI, ssetGatewayURL, metadataGatewayURL } = await createNFTFromAssetData(file, {
+          path: file.name, 
+          name: values.tokenName,
+          description: values.tokenDescription,
+          owner: account 
+        })
 
-    if(file != null) {
-      const { assetURI, metadataURI } = await createNFTFromAssetData(file, { path: "/token#1.jpg", name: "TOKEN#1", description: "auction asset" })
       console.log("assetURI", assetURI)
       console.log("metadataURI", metadataURI)
+      console.log("ssetGatewayURL", ssetGatewayURL)
+      console.log("metadataGatewayURL", metadataGatewayURL)
 
-      send(metadataURI, { from: account })  
+      send(stripIpfsUriPrefix(metadataURI), { from: account })  
 
       setDisabled(true)       
     }
@@ -122,7 +159,7 @@ export const DeedRepositoryForm = () => {
 
   return (
     <FormikWithRef
-      initialValues={{ tokenURI: '' }}
+      initialValues={{ tokenName: '', tokenDescription: '' }}
       onSubmit={onSubmit}
       ref={formikRef}
     >
@@ -137,61 +174,65 @@ export const DeedRepositoryForm = () => {
             roundedTop={"xl"}
           >
             <SimpleGrid columns={3} spacing={6}>
-              <Field name='tokenURI' validate={isURI}>
+              <Field name='tokenName' validate={isNotEmpty}>
                 {({ field, form }: FieldProps<string>) => (
-                  <FormControl as={GridItem} colSpan={[3, 3]} isInvalid={(form.errors.tokenURI && form.touched.tokenURI) as boolean}>
+                  <FormControl as={GridItem} colSpan={3} isInvalid={(form.errors.tokenName && form.touched.tokenName) as boolean}>
                     <FormLabel
-                      htmlFor='tokenURI'
+                      htmlFor='tokenName'
                       fontSize="sm"
                       fontWeight="md"
                       color={gray700gray50}
                     >
-                      URI
+                      Name
                     </FormLabel>
-                    <InputGroup >
-                      <InputLeftAddon
-                        bg={gray50gray800}
-                        color={gray500gray50}
-                        rounded="xl">
-                          http://
-                      </InputLeftAddon>
                       <Input
-                        id="tokenURI"
-                        type="url"
-                        placeholder="www.example.com"
+                        id="tokenName"
+                        type="text"
+                        placeholder=""
                         focusBorderColor="brand.400"
                         rounded="xl"
                         {...field}
                       />
-                    </InputGroup>
-                    <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenURI}</FormErrorMessage>
+                      <FormHelperText>
+                        Identifies the asset to which this NFT represents.
+                      </FormHelperText>
+                    <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenName}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
             </SimpleGrid>
 
-            <div>
-              <FormControl id="email" mt={1}>
+            <Box>
+              <Field name='tokenDescription'  validate={isNotEmpty}>
+              {({ field, form }: FieldProps<string>) => (
+              <FormControl mt={1} isInvalid={(form.errors.tokenDescription && form.touched.tokenDescription) as boolean}>
                 <FormLabel
                   fontSize="sm"
                   fontWeight="md"
                   color={gray700gray50}
                 >
-                  About
+                  Description
                 </FormLabel>
                 <Textarea
-                  placeholder="you@example.com"
+                  id="tokenDescription"
+                  placeholder="..."
                   mt={1}
                   rows={3}
                   shadow="sm"
                   focusBorderColor="brand.400"
                   fontSize={{ sm: "sm" }}
+                  minH={120}
+                  rounded="xl"
+                  {...field}
                 />
                 <FormHelperText>
-                  Brief description for your profile. URLs are hyperlinked.
+                  Describes the asset to which this NFT represents.
                 </FormHelperText>
+                <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenDescription}</FormErrorMessage>
               </FormControl>
-            </div>
+               )}
+              </Field>
+            </Box>
 
 
             <FormControl>
@@ -200,7 +241,7 @@ export const DeedRepositoryForm = () => {
                 fontWeight="md"
                 color={gray700gray50}
               >
-                Cover photo
+                Image
               </FormLabel>
               <Flex
                 mt={1}
@@ -211,7 +252,7 @@ export const DeedRepositoryForm = () => {
                 borderWidth={2}
                 borderColor={gray300gray500}
                 borderStyle="dashed"
-                rounded="md"
+                rounded="xl"
               >
                 <Stack spacing={1} textAlign="center">
                   <Icon
@@ -266,6 +307,9 @@ export const DeedRepositoryForm = () => {
                   </Text>
                 </Stack>
               </Flex>
+              <FormHelperText>
+                * Consider making any images at a width between 320 and 1080 pixels and aspect ratio between 1.91:1 and 4:5 inclusive.
+                </FormHelperText>
             </FormControl>
           </Stack>
           <Box
@@ -276,8 +320,8 @@ export const DeedRepositoryForm = () => {
             roundedBottom={"xl"}
           >
             <FormControl w={{ base: '100%', md: '100%' }}>
-              <Button colorScheme='blue' isLoading={props.isSubmitting} type='submit' disabled={!account || disabled}>
-                Submit
+              <Button isLoading={props.isSubmitting} type='submit' disabled={!account || disabled}>
+                Create
               </Button>
             </FormControl>
           </Box>

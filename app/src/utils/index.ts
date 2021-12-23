@@ -1,3 +1,3 @@
 export * from './toHttpPath'
-export * from './ensureIpfsUriPrefix'
+export * from './ipfs'
 export * from './validation'
