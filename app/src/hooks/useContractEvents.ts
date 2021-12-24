@@ -2,23 +2,26 @@ import { useEffect, useState } from 'react'
 import { useBlockNumber, useEthers } from '@usedapp/core'
 import { Contract, Event } from '@ethersproject/contracts'
 
-type FilterProps = {
+/*type FilterProps = {
     to?: string | null | undefined,
     fromBlock?: number,
     toBlock?: number
-}
+}*/
 //'Transfer', { filter: {'to': toAddr}, fromBlock: 0, toBlock: 'latest'}
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function useContractEvents(contract: Contract | null, name: string, args?: FilterProps) {
-    const [events, setContractEvents] = useState<Array<Event>>([]);
+export function useContractEvents(contract: Contract, name: string) {
+
+    const { account } = useEthers()
     const { library: provider } = useEthers();
     const latestBlockNumber = useBlockNumber();
+
+    const [events, setContractEvents] = useState<Array<Event>>([]);
 
     useEffect(() => {
         async function fetchEvents(contract: Contract) {
             if(provider && latestBlockNumber){
                 try{
-                    const filter = contract.filters[name](null, args?.to);
+                    const filter = contract.filters[name](null, account);
                     const connectedContract = contract.connect(provider);
                     //latestBlockNumber, 'latest'
                     const result = await connectedContract.queryFilter(filter);
@@ -29,8 +32,8 @@ export function useContractEvents(contract: Contract | null, name: string, args?
                 }
             }
         }
-        contract && fetchEvents(contract);
-    }, [contract, provider, latestBlockNumber])
+        account && latestBlockNumber && fetchEvents(contract);
+    }, [account, provider, latestBlockNumber])
 
     return events;
 }
