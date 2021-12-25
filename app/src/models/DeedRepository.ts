@@ -19,6 +19,8 @@ export class TokenProperties {
         this.image = image;
         this.meta = meta;
     }
+
+    static Default = () => new TokenProperties("", "", "")
 } 
 
 

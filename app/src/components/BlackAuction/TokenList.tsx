@@ -7,10 +7,11 @@ import { useContractEvents } from '../../hooks';
 import { Contract, Event } from '@ethersproject/contracts'
 import { useContractCalls } from '@usedapp/core'
 import { toHttpPath } from "../../utils";
+import styled from "styled-components";
 
-function useTokensURI(contract: Contract): Array<Array<string>> {
+function useTokensURI(contract: Contract): PhotoProps[] {
 
-  const [tokensURI, settokensURI] = useState<string[][]>([])
+  const [tokensURI, settokensURI] = useState<PhotoProps[]>([])
   const transferEvents = useContractEvents(contract, "Transfer");
   const callResult = useContractCalls(
     transferEvents
@@ -24,59 +25,21 @@ function useTokensURI(contract: Contract): Array<Array<string>> {
   )
 
   useEffect(() => {
-    const list = callResult.filter(t => t);
+    const list = callResult
+    .filter(t => t)
+    .map(result => { 
+      
+      const [uri] = result as string[]; 
+      return ({ src: toHttpPath(uri), width: 1, height: 1 })
+    })
+
       if(list.length > 0){
-        settokensURI(list as string[][])
+        settokensURI(list as PhotoProps[])
       }
   }, [callResult])
   
   return tokensURI;
 }
-
-interface TokenListItem {
-  title: string
-}
-
-const useTokenList = (contract: Contract) => {
-  const [tokenList, setTokenList] = useState<Array<PhotoProps<TokenListItem>>>([])
-  const tokensURI = useTokensURI(contract)
-
-  useEffect(() => {
-
-    async function fetchTokenList(list: string[][]) {
-      const result = await Promise.all(list.map(async (tokenURI: Array<string>) => {
-        const [metadataURI] = tokenURI;
-        let result = null
-        if (metadataURI) {
-          try {
-            const response = await fetch(toHttpPath(metadataURI));
-            if (response.ok) {
-              const { properties } = await response.json();
-              const { name, description, image } = properties;
-    
-              //console.log(`fetched metadata: name:${name}, description:${description}, image:${image}`)
-              result = { name, description, image }
-            } else {
-              const errorMessage = await response.text()
-              console.log("Error:", errorMessage)
-            }
-          } catch (error) {
-            console.log("catch Error:", error)
-          }
-        }
-    
-        return { src: toHttpPath(result?.image), width: 1, height: 1, title: result?.name }
-      }))
-
-      setTokenList(result);
-    }
-
-   tokensURI && fetchTokenList(tokensURI) 
-  }, [tokensURI])
-
-  return tokenList;
-}
-
 
 type TokenListProps = {
   contract: Contract,
@@ -84,9 +47,7 @@ type TokenListProps = {
 
 const TokenList = ({ contract }: TokenListProps) => {
 
-  const tokenList = useTokenList(contract);
-  console.log("[TokenList] tkenList", tokenList);
-
+  const tokenList = useTokensURI(contract)
   const imageRenderer = useCallback(
     ({ index, key, photo }) => {
       return (
@@ -115,14 +76,24 @@ const TokenList = ({ contract }: TokenListProps) => {
           fontSize="sm"
           color={useColorModeValue("gray.600", "gray.400")}
         >
-          ...
+          
         </Text>
       </Box>
       <Box>
-        <Gallery photos={tokenList} margin={5} renderImage={imageRenderer} />
+        {tokenList.length !== 0 
+        ? <Gallery photos={tokenList} margin={5} renderImage={imageRenderer} /> 
+        : <H3>There are no tokens in your cart</H3>}
       </Box>
     </VStack>
   )
 }
 
 export default TokenList;
+
+const H3 = styled.h3`
+    color: #282c34;
+    border-bottom: 4px solid blueviolet;
+    width: max-content;
+    margin: 0 auto;
+    font-size: 2rem
+`
