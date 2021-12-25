@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { chakra, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
-import { TokenProperties } from "../../models/DeedRepository"
+import { DeedProperties } from "../../models/DeedRepository"
 
 type TokenCardProps = {
   index: number,
@@ -14,7 +14,7 @@ type TokenCardImage = {
 }
 
 export const TokenCard = ({ photo }: TokenCardProps) => {
-  const [metadata, setMetadata] = useState<TokenProperties>(TokenProperties.Default)
+  const [metadata, setMetadata] = useState<DeedProperties>(DeedProperties.Default)
 
   useEffect(() => {
     async function fetchSource() {
@@ -22,7 +22,7 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
         const response = await fetch(toHttpPath(photo.src));
         if (response.ok) {
           const { properties: { name, description, image } } = await response.json();
-          setMetadata(new TokenProperties(name, description, toHttpPath(image)))
+          setMetadata(new DeedProperties(name, description, toHttpPath(image)))
         } else {
           const errorMessage = await response.text()
           console.log("Error:", errorMessage)

@@ -10,7 +10,7 @@ import Config from '../../config'
 import { utils } from 'ethers'
 import { Contract } from '@ethersproject/contracts'
 import { isNotEmpty, ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils";
-import { TokenMetadata } from "../../models/DeedRepository";
+import { DeedMetadata } from "../../models/DeedRepository";
 import { create } from 'ipfs-http-client'
 
 const contractAddress = Config.DEEDREPOSITORY_ADDRESS;
@@ -85,7 +85,7 @@ export const DeedRepositoryForm = () => {
     const { cid: assetCid } = await nftClient.add({path: ipfsPath, content })
 
     const assetURI = ensureIpfsUriPrefix(assetCid) + '/' + basename
-    const metadata = new TokenMetadata(options.name, options.description, assetURI)
+    const metadata = new DeedMetadata(options.name, options.description, assetURI)
 
     const { cid: metadataCid } = await nftClient.add({
       path: '/nft/metadata.json',
