@@ -6,6 +6,10 @@ export declare interface KeyValue<K, V> {
     value: V;
 }
 
+export interface Attributes {
+    [key: string]: string;
+}
+
 export interface ERC721Properties {
     name: string
     description: string
@@ -47,7 +51,7 @@ export class DeedProperties implements ERC721ExtProperties {
         this.attributes = attributes;
     }
 
-    static Default = () => new DeedProperties("", "", "")
+    static Default = () => new DeedProperties("...", "...", "")
 } 
 
 

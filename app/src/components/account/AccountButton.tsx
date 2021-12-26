@@ -60,7 +60,7 @@ const AccountButton = ({ handleOpenModal }: Props) => {
           _hover={{
             border: "1px",
             borderStyle: "solid",
-            borderColor: "blue.400",
+            borderColor: "whiteAlpha.700",
             backgroundColor: { bg700 },
           }}
           borderRadius="xl"
@@ -82,7 +82,7 @@ const AccountButton = ({ handleOpenModal }: Props) => {
         border="1px solid transparent"
         _hover={{
           textDecoration: 'none',
-          borderColor: "blue.400"
+          borderColor: "whiteAlpha.700"
         }}>
         Connect to a wallet
       </Button>

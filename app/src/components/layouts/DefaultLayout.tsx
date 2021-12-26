@@ -48,7 +48,7 @@ const NavLink = ({ children, href, active }: NavLinkProps) => (
             fontWeight={"semibold"}
             _hover={{
                 textDecoration: 'none',
-                borderColor: "blue.400",
+                borderColor: "whiteAlpha.700",
             }}
             data-active={dataAttr(active)}
             _active={{
@@ -81,7 +81,7 @@ const DefaultLayout = ({ children }: Props) => {
 
     return (
         <>
-            <Box pos="fixed" w="100vw" zIndex={9999} bg={useColorModeValue('white', 'gray.800')}>
+            <Box pos="fixed" w="100vw" bg={useColorModeValue('white', 'gray.800')}>
                 <Flex h={16} px={5} alignItems={'center'} justifyContent={'space-between'}>
                     <HStack spacing={8} alignItems={'center'}>
                         <Box textTransform="uppercase" fontWeight="bold">black4one</Box>
@@ -113,7 +113,7 @@ const DefaultLayout = ({ children }: Props) => {
                     </Flex>
                 </Flex>
             </Box>
-            <Box h="100vh" pt={16}>
+            <Box h="100vh" pt={16} mb={-16}>
                 <SimpleGrid
                     display={{ base: "initial", md: "grid" }}
                     columns={{ md: 5 }}
@@ -124,7 +124,7 @@ const DefaultLayout = ({ children }: Props) => {
                     </GridItem>
                     <GridItem px={5} mt={[5, null, 0]} colSpan={{ md: 3 }}>
                         <Box display={"flex"} flexDir={"column"} my={"3rem"}>
-                            <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
+                            <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6" color={"#2D3748"}>
                                 {pathname}
                             </Heading>
                         </Box>
@@ -133,9 +133,9 @@ const DefaultLayout = ({ children }: Props) => {
                     <GridItem colSpan={{ md: 1 }}>
 
                     </GridItem>
-                </SimpleGrid>
-                <Box
-                    color={useColorModeValue('gray.700', 'gray.200')}>
+                </SimpleGrid>               
+            </Box>
+            <Box color={useColorModeValue('gray.700', 'gray.200')}>
                 <Container
                     as={Stack}
                     maxW={'6xl'}
@@ -146,7 +146,6 @@ const DefaultLayout = ({ children }: Props) => {
                     align={{ base: 'center', md: 'center' }}>
                     <Text>© 2021 dr.@vgust. All rights reserved</Text>
                 </Container>
-            </Box>
             </Box>
         </>
     )

@@ -35,11 +35,11 @@ const nftClient = create({
   url: 'https://ipfs.infura.io:5001/api/v0'
 })
 
-export const DeedRepositoryForm = () => {
+export const CreateDeedForm = () => {
 
-  const gray700 = useColorModeValue("white", "gray.700")
   const gray700gray50 = useColorModeValue("gray.700", "gray.50")
   const gray500gray50 = useColorModeValue("gray.500", "gay.50")
+  const gray200gray700 = useColorModeValue('gray.200', 'gray.700')
   const gray300gray500 = useColorModeValue("gray.300", "gray.500")
   const gray400gray500 = useColorModeValue("gray.400", "gray.500")
   const gray600gray200 = useColorModeValue("brand.600", "brand.200")
@@ -165,14 +165,7 @@ export const DeedRepositoryForm = () => {
     >
       {(props) => (
         <Form>
-          <Stack
-            px={4}
-            py={5}
-            bg={gray700}
-            spacing={6}
-            p={{ sm: 6 }}
-            roundedTop={"xl"}
-          >
+          <Stack>
             <SimpleGrid columns={3} spacing={6}>
               <Field name='tokenName' validate={isNotEmpty}>
                 {({ field, form }: FieldProps<string>) => (
@@ -193,10 +186,11 @@ export const DeedRepositoryForm = () => {
                         rounded="xl"
                         {...field}
                       />
+                      <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenName}</FormErrorMessage>
                       <FormHelperText>
                         Identifies the asset to which this NFT represents.
                       </FormHelperText>
-                    <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenName}</FormErrorMessage>
+                    
                   </FormControl>
                 )}
               </Field>
@@ -225,10 +219,11 @@ export const DeedRepositoryForm = () => {
                   rounded="xl"
                   {...field}
                 />
+                <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenDescription}</FormErrorMessage>
                 <FormHelperText>
                   Describes the asset to which this NFT represents.
                 </FormHelperText>
-                <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenDescription}</FormErrorMessage>
+                
               </FormControl>
                )}
               </Field>
@@ -313,14 +308,19 @@ export const DeedRepositoryForm = () => {
             </FormControl>
           </Stack>
           <Box
-            px={{ base: 4, sm: 6 }}
+            //px={{ base: 4, sm: 6 }}
             py={3}
             bg={gray500gray900}
             textAlign="right"
             roundedBottom={"xl"}
           >
             <FormControl w={{ base: '100%', md: '100%' }}>
-              <Button isLoading={props.isSubmitting} type='submit' disabled={!account || disabled}>
+              <Button bg={gray200gray700}
+                rounded={'xl'}
+                border="1px solid transparent"
+                _hover={{
+                    borderColor: "whiteAlpha.700"
+                }} isLoading={props.isSubmitting} type='submit' disabled={!account || disabled}>
                 Create
               </Button>
             </FormControl>

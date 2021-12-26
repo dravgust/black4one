@@ -67,7 +67,7 @@ const TokenList = ({ contract }: TokenListProps) => {
       //bg={useColorModeValue("white", "gray.700")}
       py={5}
     >
-      <Box display={"flex"} flexDir={"column"} my={"3rem"}>
+      <Box display={"flex"} flexDir={"column"} my={"2rem"}>
         <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
           Token List
         </Heading>
@@ -91,8 +91,8 @@ const TokenList = ({ contract }: TokenListProps) => {
 export default TokenList;
 
 const H3 = styled.h3`
-    color: #282c34;
-    border-bottom: 4px solid blueviolet;
+    color: #2D3748;
+    border-bottom: 4px solid #2D3748;
     width: max-content;
     margin: 0 auto;
     font-size: 2rem

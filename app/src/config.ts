@@ -11,8 +11,8 @@ export default {
     },
   },
 
-  DEEDREPOSITORY_ADDRESS: '0x3CC5f4547204B8d9955c67c7EFeF1beDFAe1Ebb9',
-  AUCTIONREPOSITORY_ADDRESS: '0x1ae9633380de121E99c81C462530A6EB654f4Cc0',
+  DEEDREPOSITORY_ADDRESS: DeedRepository.networks[1337].address,
+  AUCTIONREPOSITORY_ADDRESS: AuctionRepository.networks[1337].address,
 
   DEEDREPOSITORY_ABI: DeedRepository.abi,
   AUCTIONREPOSITORY_ABI: AuctionRepository.abi,
