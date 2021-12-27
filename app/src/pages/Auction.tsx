@@ -1,5 +1,6 @@
 import React from "react";
 import DefaultLayout from "../components/layouts/DefaultLayout";
+import { useEthers } from '@usedapp/core'
 //import useAuctionRepository from '../models/useAuctionRepository'
 import {
     useDisclosure,
@@ -21,11 +22,12 @@ const contract = new Contract(contractAddress, contractInterface);
 
 const Auction = () => {
 
+    const { account } = useEthers()
     const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
 
     return (
         <DefaultLayout>          
-            <Button onClick={onCreateDeedOpen}
+            <Button onClick={onCreateDeedOpen} disabled={!account}
                 bg={useColorModeValue('gray.200', 'gray.700')}
                 rounded={'xl'}
                 border="1px solid transparent"
