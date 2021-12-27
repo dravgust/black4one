@@ -137,19 +137,13 @@ import Transactions from "./Transactions";
         </ModalBody>
 
         <ModalFooter
-          justifyContent="end"
+          justifyContent="start"
           background={useColorModeValue('gray.200', 'gray.700')}
           borderBottomLeftRadius="3xl"
           borderBottomRightRadius="3xl"
           p={6}
         >
-          <Text
-            textAlign="left"
-            fontWeight="medium"
-            fontSize="md"
-          >
-            <Transactions />
-          </Text>
+          <Transactions />
         </ModalFooter>
       </ModalContent>
     </Modal>)
