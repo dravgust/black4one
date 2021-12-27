@@ -9,6 +9,7 @@ import AccountButton from "../account/AccountButton";
 import AccountModal from "../account/AccountModal";
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { dataAttr } from "@chakra-ui/utils";
+import Notifications from "../account/Notifications";
 
 type Props = {
     children?: ReactNode;
@@ -124,7 +125,7 @@ const DefaultLayout = ({ children }: Props) => {
                     </GridItem>
                     <GridItem px={5} mt={[5, null, 0]} colSpan={{ md: 3 }}>
                         <Box display={"flex"} flexDir={"column"} my={"3rem"}>
-                            <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6" color={"#2D3748"}>
+                            <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
                                 {pathname}
                             </Heading>
                         </Box>
@@ -133,7 +134,8 @@ const DefaultLayout = ({ children }: Props) => {
                     <GridItem colSpan={{ md: 1 }}>
 
                     </GridItem>
-                </SimpleGrid>               
+                </SimpleGrid>     
+                <Notifications/>
             </Box>
             <Box color={useColorModeValue('gray.700', 'gray.200')}>
                 <Container
@@ -144,7 +146,7 @@ const DefaultLayout = ({ children }: Props) => {
                     spacing={4}
                     justify={{ base: 'center', md: 'space-between' }}
                     align={{ base: 'center', md: 'center' }}>
-                    <Text>© 2021 dr.@vgust. All rights reserved</Text>
+                    <Text color={"#2D3748"}>© 2021 dr.@vgust. All rights reserved</Text>
                 </Container>
             </Box>
         </>

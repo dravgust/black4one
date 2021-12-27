@@ -17,6 +17,7 @@ import {
   import { ExternalLinkIcon, CopyIcon } from "@chakra-ui/icons";
   import { useEthers } from "@usedapp/core";
   import Identicon from "./IdentIcon";
+import Transactions from "./Transactions";
   
   type Props = {
     isOpen: boolean;
@@ -147,7 +148,7 @@ import {
             fontWeight="medium"
             fontSize="md"
           >
-            Your transactions willl appear here...
+            <Transactions />
           </Text>
         </ModalFooter>
       </ModalContent>

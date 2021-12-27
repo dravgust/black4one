@@ -82,7 +82,7 @@ const TokenList = ({ contract }: TokenListProps) => {
       <Box>
         {tokenList.length !== 0 
         ? <Gallery photos={tokenList} margin={5} renderImage={imageRenderer} /> 
-        : <H3>There are no tokens in your cart</H3>}
+        : <EmptyDescription>There are no tokens in your cart</EmptyDescription>}
       </Box>
     </VStack>
   )
@@ -90,10 +90,10 @@ const TokenList = ({ contract }: TokenListProps) => {
 
 export default TokenList;
 
-const H3 = styled.h3`
+const EmptyDescription = styled.h3`
     color: #2D3748;
     border-bottom: 4px solid #2D3748;
     width: max-content;
     margin: 0 auto;
-    font-size: 2rem
+    font-size: calc(10px + 2vmin)
 `
