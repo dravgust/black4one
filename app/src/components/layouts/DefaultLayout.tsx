@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect } from "react";
 import { Link as RouteLink, To, useLocation } from "react-router-dom";
 import {
-    Box, Flex, HStack, Stack, Button, SimpleGrid, GridItem,
+    Box, Flex, HStack, Stack, Button,
     useDisclosure, useColorMode,
     useColorModeValue, Container, Text, Heading
 } from '@chakra-ui/react';
@@ -9,7 +9,8 @@ import AccountButton from "../account/AccountButton";
 import AccountModal from "../account/AccountModal";
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { dataAttr } from "@chakra-ui/utils";
-import Notifications from "../account/Notifications";
+import { useNotifications, shortenAddress } from '@usedapp/core'
+import { useToast, UseToastOptions } from '@chakra-ui/react'
 
 type Props = {
     children?: ReactNode;
@@ -73,16 +74,58 @@ const DefaultLayout = ({ children }: Props) => {
 
     const gray200gray700 = useColorModeValue('gray.200', 'gray.700')
 
+    const { notifications, /*addNotification, removeNotification*/ } = useNotifications()
+    const toast = useToast()
+
+    const toasConfig: UseToastOptions = {
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom-right',
+        status: 'info', //['success', 'error', 'warning', 'info']
+        title: 'Info'
+    }
+
     useEffect(() => {
-        console.log(`[DefaultLayout] mount ${pathname}`);
-        return () => {
-            console.log(`[DefaultLayout] unmount ${pathname}`);
-        };
-    }, [pathname])
+        notifications.map((notification) => {
+
+            switch (notification.type) {
+                case 'walletConnected':
+                    toast({
+                        ...toasConfig,
+                        description: `Wallet ${shortenAddress(notification.address)} connected`,
+                    });
+                    break;
+                case 'transactionStarted':
+                    toast({
+                        ...toasConfig,
+                        description: `Transaction ${notification.transactionName} started`,
+                    });
+                    break
+                case 'transactionSucceed':
+                    toast({
+                        ...toasConfig,
+                        description: `Transaction ${notification.transactionName} succeed`,
+                        status: 'success',
+                        title: 'Success'
+                    });
+                    break
+                case 'transactionFailed':
+                    toast({
+                        ...toasConfig,
+                        description: `Transaction ${notification.transactionName} failed`,
+                        status: 'error',
+                        title: 'Error'
+                    });
+                    break
+                default:
+                    break;
+            }
+        })
+    }, [notifications]);
 
     return (
         <>
-            <Box pos="fixed" w="100vw" bg={useColorModeValue('white', 'gray.800')}>
+            <Box h="100vh" w="100vw" bg={useColorModeValue('white', 'gray.800')}>
                 <Flex h={16} px={5} alignItems={'center'} justifyContent={'space-between'}>
                     <HStack spacing={8} alignItems={'center'}>
                         <Box textTransform="uppercase" fontWeight="bold">black4one</Box>
@@ -113,41 +156,30 @@ const DefaultLayout = ({ children }: Props) => {
                         </Stack>
                     </Flex>
                 </Flex>
-            </Box>
-            <Box h="100vh" pt={16} mb={-16}>
-                <SimpleGrid
-                    display={{ base: "initial", md: "grid" }}
-                    columns={{ md: 5 }}
-                    spacing={{ md: 6 }}
-                >
-                    <GridItem colSpan={{ md: 1 }}>
 
-                    </GridItem>
-                    <GridItem px={5} mt={[5, null, 0]} colSpan={{ md: 3 }}>
-                        <Box display={"flex"} flexDir={"column"} my={"3rem"}>
+                <Container mb={16} maxW='container.xl'>
+                    <Box px={5} mt={[5, null, 0]}>
+                        <Box display={"flex"} flexDir={"column"} my={"1.5rem"}>
                             <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
                                 {pathname}
                             </Heading>
                         </Box>
                         {children}
-                    </GridItem>
-                    <GridItem colSpan={{ md: 1 }}>
-
-                    </GridItem>
-                </SimpleGrid>     
-                <Notifications/>
-            </Box>
-            <Box color={useColorModeValue('gray.700', 'gray.200')}>
-                <Container
-                    as={Stack}
-                    maxW={'6xl'}
-                    py={4}
-                    direction={{ base: 'column', md: 'row' }}
-                    spacing={4}
-                    justify={{ base: 'center', md: 'space-between' }}
-                    align={{ base: 'center', md: 'center' }}>
-                    <Text color={"#2D3748"}>© 2021 dr.@vgust. All rights reserved</Text>
+                    </Box>
                 </Container>
+                <Box position={"absolute"} bottom={0} color={useColorModeValue('gray.700', 'gray.200')}>
+                    <Container
+                        as={Stack}
+                        maxW={'6xl'}
+                        py={4}
+                        direction={{ base: 'column', md: 'row' }}
+                        spacing={4}
+                        justify={{ base: 'center', md: 'space-between' }}
+                        align={{ base: 'center', md: 'center' }}>
+                        <Text color={"#2D3748"}>© 2021 dr.@vgust. All rights reserved</Text>
+                    </Container>
+                </Box>
+
             </Box>
         </>
     )

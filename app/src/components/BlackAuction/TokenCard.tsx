@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { chakra, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
+import { chakra, Flex, Box, useColorModeValue, ButtonGroup} from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { DeedProperties } from "../../models/DeedRepository"
 
@@ -40,16 +40,16 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
       direction="column"
       justifyContent="center"
       alignItems="center"
-      w="xs"
-      mx={1}
-      //mx="auto"
-      mb={5}
+      //w="sm"
+      //mx={1}
+      mx="auto"
+      //mb={5}
     >
       <Box
         bg="gray.300"
         h={64}
         w="full"
-        rounded="lg"
+        //roundedTop="lg"
         shadow="md"
         bgSize="cover"
         bgPos="center"
@@ -60,14 +60,18 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
       ></Box>
 
       <Box
-        w={{ base: 56, md: 64 }}
-        bg={useColorModeValue("white", "gray.800")}
+       // w={{ base: 56, md: 64 }}
+       w="sm"
+        bg={"transparent"}
         mt={-10}
         shadow="lg"
-        rounded="lg"
+        //rounded="lg"
+        //roundedBottom={"lg"}
         overflow="hidden"
       >
         <chakra.h3
+        bg={useColorModeValue("white", "gray.800")}
+        opacity={0.8}
           py={2}
           textAlign="center"
           fontWeight="bold"
@@ -87,7 +91,6 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
           bg={useColorModeValue("gray.200", "gray.700")}
         >
           <chakra.span
-            fontWeight="bold"
             color={useColorModeValue("gray.800", "gray.200")}
           >
             {metadata.description}

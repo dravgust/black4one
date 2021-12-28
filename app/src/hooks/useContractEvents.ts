@@ -9,9 +9,8 @@ import { Contract, Event } from '@ethersproject/contracts'
 }*/
 //'Transfer', { filter: {'to': toAddr}, fromBlock: 0, toBlock: 'latest'}
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function useContractEvents(contract: Contract, name: string) {
+export function useContractEvents(contract: Contract, name: string, account: string | null | undefined = null) {
 
-    const { account } = useEthers()
     const { library: provider } = useEthers();
     const latestBlockNumber = useBlockNumber();
 

@@ -13,6 +13,7 @@ import {
 import { CreateDeedForm } from "./CreateDeedForm";
 
 const CreateDeedModal = ({ isOpen, onClose }: ModalProps) => {
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
             <ModalOverlay />
@@ -43,7 +44,7 @@ const CreateDeedModal = ({ isOpen, onClose }: ModalProps) => {
                         pb={2}
                         mb={3}
                     >
-                        <CreateDeedForm />
+                        <CreateDeedForm isOpen={isOpen} onClose={onClose}/>
                     </Box>
                 </ModalBody>
                 {/*<ModalFooter

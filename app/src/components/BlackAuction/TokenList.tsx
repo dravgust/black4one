@@ -5,17 +5,18 @@ import { TokenCard } from "./TokenCard";
 import Gallery ,{ PhotoProps } from "react-photo-gallery";
 import { useContractEvents } from '../../hooks';
 import { Contract, Event } from '@ethersproject/contracts'
-import { useContractCalls } from '@usedapp/core'
+import { useContractCalls, useEthers } from '@usedapp/core'
 import { toHttpPath } from "../../utils";
 import styled from "styled-components";
 
 function useTokensURI(contract: Contract): PhotoProps[] {
 
   const [tokensURI, settokensURI] = useState<PhotoProps[]>([])
-  const transferEvents = useContractEvents(contract, "Transfer");
+  const { account } = useEthers()
+  const transferEvents = useContractEvents(contract, "Transfer", account);
   const callResult = useContractCalls(
     transferEvents
-    ?transferEvents.map((event: Event) => ({
+    ? transferEvents.map((event: Event) => ({
       abi: contract.interface,
       address: contract.address,
       method: 'tokenURI(uint256)',
@@ -36,7 +37,7 @@ function useTokensURI(contract: Contract): PhotoProps[] {
       if(list.length > 0){
         settokensURI(list as PhotoProps[])
       }
-  }, [callResult])
+  }, [callResult, account])
   
   return tokensURI;
 }
@@ -67,7 +68,7 @@ const TokenList = ({ contract }: TokenListProps) => {
       //bg={useColorModeValue("white", "gray.700")}
       py={5}
     >
-      <Box display={"flex"} flexDir={"column"} my={"2rem"}>
+      <Box display={"flex"} flexDir={"column"} my={"1.5rem"}>
         <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
           Token List
         </Heading>

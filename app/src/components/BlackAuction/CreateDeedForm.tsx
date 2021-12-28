@@ -13,6 +13,7 @@ import { ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils
 import { DeedMetadata } from "../../models/DeedRepository";
 import { create } from 'ipfs-http-client'
 import * as yup from "yup";
+import { ModalProps } from "../../models/types";
 
 const contractAddress = Config.DEEDREPOSITORY_ADDRESS;
 const contractAbi = Config.DEEDREPOSITORY_ABI;
@@ -37,7 +38,8 @@ const nftClient = create({
   url: 'https://ipfs.infura.io:5001/api/v0'
 })
 
-export const CreateDeedForm = () => {
+
+export const CreateDeedForm = ({isOpen, onClose}: ModalProps) => {
 
   const gray700gray50 = useColorModeValue("gray.700", "gray.50")
   const gray500gray50 = useColorModeValue("gray.500", "gay.50")
@@ -157,6 +159,9 @@ export const CreateDeedForm = () => {
     if (state.status != 'Mining') {
       formikRef.current?.resetForm();
       setDisabled(false)
+
+      console.log("isOpen", isOpen)
+      console.log("onClose", onClose)
     }
   }, [state])
 
