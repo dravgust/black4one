@@ -9,10 +9,9 @@ import { useContractCalls, useEthers } from '@usedapp/core'
 import { toHttpPath } from "../../utils";
 import styled from "styled-components";
 
-function useTokensURI(contract: Contract): PhotoProps[] {
+function useTokensURI(contract: Contract, account: string | null | undefined): PhotoProps[] {
 
   const [tokensURI, settokensURI] = useState<PhotoProps[]>([])
-  const { account } = useEthers()
   const transferEvents = useContractEvents(contract, "Transfer", account);
   const callResult = useContractCalls(
     transferEvents
@@ -48,7 +47,9 @@ type TokenListProps = {
 
 const TokenList = ({ contract }: TokenListProps) => {
 
-  const tokenList = useTokensURI(contract)
+  const { account } = useEthers()
+  const tokenList = useTokensURI(contract, account)
+
   const imageRenderer = useCallback(
     ({ index, key, photo }) => {
       return (
@@ -81,7 +82,7 @@ const TokenList = ({ contract }: TokenListProps) => {
         </Text>
       </Box>
       <Box>
-        {tokenList.length !== 0 
+        {account && tokenList.length !== 0 
         ? <Gallery photos={tokenList} margin={5} renderImage={imageRenderer} /> 
         : <EmptyDescription>There are no tokens in your cart</EmptyDescription>}
       </Box>

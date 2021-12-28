@@ -42,7 +42,7 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
       alignItems="center"
       //w="sm"
       //mx={1}
-      mx="auto"
+      //mx="auto"
       //mb={5}
     >
       <Box
