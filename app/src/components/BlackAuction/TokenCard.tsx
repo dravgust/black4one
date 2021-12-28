@@ -40,13 +40,14 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
       direction="column"
       justifyContent="center"
       alignItems="center"
-      //w="sm"
+      w="sm"
       //mx={1}
       //mx="auto"
       //mb={5}
     >
       <Box
         bg="gray.300"
+        //w={64}
         h={64}
         w="full"
         //roundedTop="lg"
@@ -60,7 +61,7 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
       ></Box>
 
       <Box
-       // w={{ base: 56, md: 64 }}
+        //w={{ base: 56, md: 64 }}
        w="sm"
         bg={"transparent"}
         mt={-10}

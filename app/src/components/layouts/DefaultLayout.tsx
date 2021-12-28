@@ -125,7 +125,7 @@ const DefaultLayout = ({ children }: Props) => {
 
     return (
         <>
-            <Box h="100vh" w="100vw" bg={useColorModeValue('white', 'gray.800')}>
+            <Box h="100vh" bg={useColorModeValue('white', 'gray.800')}>
                 <Flex h={16} px={5} alignItems={'center'} justifyContent={'space-between'}>
                     <HStack spacing={8} alignItems={'center'}>
                         <Box textTransform="uppercase" fontWeight="bold">black4one</Box>
