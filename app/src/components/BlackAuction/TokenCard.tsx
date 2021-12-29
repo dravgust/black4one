@@ -96,7 +96,8 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
         border="1px"
         borderStyle="solid"
         borderColor={useColorModeValue('gray.100', 'gray.600')}
-        p={1}>
+        p={1} 
+        shadow="md">
 
         <Flex
           alignItems="start"

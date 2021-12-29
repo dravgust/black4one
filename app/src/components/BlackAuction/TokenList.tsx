@@ -33,10 +33,9 @@ function useTokensURI(contract: Contract, account: string | null | undefined): P
     const list = callResult
       .filter(t => t)
       .map(result => {
-
         const [uri] = result as string[];
         return ({ src: toHttpPath(uri), width: 1, height: 1 })
-      })
+      }).reverse()
 
     if (list.length > 0) {
       settokensURI(list as PhotoProps[])

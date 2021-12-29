@@ -14,9 +14,8 @@ const Transactions = () => {
     const bgIconColor = useColorModeValue("white.300", "gray.700");
 
     return (
-        <Flex direction="column">
-            {transactions.map((tx, index, arr) => {
-                console.log("[Transactions]", tx)
+        <Flex direction="column"  maxHeight={300} overflow={"auto"} width={"100%"} pl={2}>
+            {transactions.map((tx, index) => {
                 return (
                     <Flex alignItems="center" justifyContent="start" key={index}>
                         <Flex direction="column" h="100%">
@@ -34,7 +33,7 @@ const Transactions = () => {
                             <Box
                                 w="2px"
                                 bg="gray.200"
-                                h={index === arr.length - 1 ? "15px" : "28px"}
+                                h={"54px"}
                             ></Box>
                         </Flex>
                         <Flex direction="column" justifyContent="flex-start" h="100%">
