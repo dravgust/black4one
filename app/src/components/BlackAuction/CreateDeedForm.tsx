@@ -39,7 +39,7 @@ const nftClient = create({
 })
 
 
-export const CreateDeedForm = ({isOpen, onClose}: ModalProps) => {
+export const CreateDeedForm = ({onClose}: ModalProps) => {
 
   const gray700gray50 = useColorModeValue("gray.700", "gray.50")
   const gray500gray50 = useColorModeValue("gray.500", "gay.50")
@@ -156,16 +156,17 @@ export const CreateDeedForm = ({isOpen, onClose}: ModalProps) => {
 
   useEffect(() => {
     console.log("[DeedRepositoryForm] state: ", state);
-    if (state.status != 'Mining') {
-      formikRef.current?.resetForm();
+    if (state.status != 'Mining') {  
       setDisabled(false)
 
-      console.log("isOpen", isOpen)
-      console.log("onClose", onClose)
+      if(state.status == 'Success'){
+        formikRef.current?.resetForm();
+        onClose()
+      }
     }
   }, [state])
 
-  const FILE_SIZE = 160 * 1024;
+  const FILE_SIZE = 500 * 1024;
   const SUPPORTED_FORMATS = [
       "image/jpg",
       "image/jpeg",

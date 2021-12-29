@@ -4,6 +4,8 @@ import { useTransactions, shortenTransactionHash } from '@usedapp/core'
 import {
     LinkIcon,
 } from "@chakra-ui/icons";
+import { utils } from 'ethers'
+import moment from 'moment'
 
 const Transactions = () => {
 
@@ -37,10 +39,16 @@ const Transactions = () => {
                         </Flex>
                         <Flex direction="column" justifyContent="flex-start" h="100%">
                             <Text fontSize="sm" fontWeight="bold">
-                                {tx.transactionName}
+                                {moment(new Date(tx.submittedAt)).format('DD/MM/YYYY h:mm:ss')}
+                            </Text>
+                            <Text fontSize="sm">
+                                {tx.transactionName}  {shortenTransactionHash(tx.transaction.hash)}
                             </Text>
                             <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                                {shortenTransactionHash(tx.transaction.hash)}
+                               Gas Price: {utils.formatUnits(tx.transaction.gasPrice ?? 0, 'gwei')} Gwei
+                            </Text>
+                            <Text fontSize="sm" color="gray.400" fontWeight="normal">
+                               Gas Used: {utils.formatUnits(tx.receipt?.cumulativeGasUsed ?? 0, 10)}
                             </Text>
                         </Flex>
                     </Flex>
