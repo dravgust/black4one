@@ -1,7 +1,59 @@
 import React, { useState, useEffect } from "react"
-import { chakra, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
+import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { DeedProperties } from "../../models/DeedRepository"
+import { useContractMethod } from "../../hooks";
+import { useEthers } from "@usedapp/core"
+import Config from "../../config";
+
+type CreateAucionProps = {
+  deedId: number,
+};
+
+export const CreateAucion = ({deedId}: CreateAucionProps) => {
+
+  const bg700 = useColorModeValue('gray.200', 'gray.700')
+  const bg800 = useColorModeValue('gray.300', 'gray.800')
+
+  const { account } = useEthers()
+  const [disabled, setDisabled] = useState(false)
+  const { state: transferDeedState, send: transferDeed } = useContractMethod("transferFrom")
+
+  function onClick() {
+    if(account){
+      setDisabled(true)
+      transferDeed(account, Config.AUCTIONREPOSITORY_ADDRESS, deedId, { from: account })
+    }
+  }
+
+  useEffect(() => {
+    console.log("[CreateAucion] state: ", transferDeedState);
+    if (transferDeedState.status != 'Mining') {  
+      setDisabled(false)
+    }
+  }, [transferDeedState])
+
+  return (
+    <Button
+    onClick={onClick}
+    disabled={!account || disabled}
+    bg={bg800}
+    border="1px solid transparent"
+    _hover={{
+      border: "1px",
+      borderStyle: "solid",
+      borderColor: "whiteAlpha.700",
+      backgroundColor: { bg700 },
+    }}
+    borderRadius="xl"
+    m="1px"
+    px={3}
+    height="38px"
+  >
+    Create Auction
+  </Button>
+  )
+}
 
 type TokenCardProps = {
   index: number,
@@ -9,8 +61,10 @@ type TokenCardProps = {
 };
 
 type TokenCardImage = {
-  title: string,
-  src: string
+  width: number,
+  height: number,
+  src: string,
+  deedId: number
 }
 
 export const TokenCard = ({ photo }: TokenCardProps) => {
@@ -19,7 +73,7 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
   const bg800 = useColorModeValue('gray.300', 'gray.800')
 
   const [metadata, setMetadata] = useState<DeedProperties>(DeedProperties.Default)
-
+  
   useEffect(() => {
     async function fetchSource() {
       try {
@@ -115,25 +169,15 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
           >
             {metadata.description}
           </chakra.span>
+          <chakra.span
+            color={useColorModeValue("gray.800", "gray.200")}
+          >
+            DeedID: {photo.deedId}
+          </chakra.span>
 
           <ButtonGroup variant='outline' spacing='1' pt={2} borderTop="1px" borderColor={bg800}>
 
-            <chakra.button
-              bg={bg800}
-              border="1px solid transparent"
-              _hover={{
-                border: "1px",
-                borderStyle: "solid",
-                borderColor: "whiteAlpha.700",
-                backgroundColor: { bg700 },
-              }}
-              borderRadius="xl"
-              m="1px"
-              px={3}
-              height="38px"
-            >
-              Create Auction
-            </chakra.button>
+           <CreateAucion deedId={photo.deedId}/>
 
             <chakra.button
               bg={bg800}

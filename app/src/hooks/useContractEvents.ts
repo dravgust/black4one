@@ -8,8 +8,9 @@ import { Contract, Event } from '@ethersproject/contracts'
     toBlock?: number
 }*/
 //'Transfer', { filter: {'to': toAddr}, fromBlock: 0, toBlock: 'latest'}
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function useContractEvents(contract: Contract, name: string, account: string | null | undefined = null) {
+
+ /* eslint-disable @typescript-eslint/no-explicit-any */
+export function useContractEvents(contract: Contract, eventName: string, ...accountArgs : any) {
 
     const { library: provider } = useEthers();
     const latestBlockNumber = useBlockNumber();
@@ -20,7 +21,7 @@ export function useContractEvents(contract: Contract, name: string, account: str
         async function fetchEvents(contract: Contract) {
             if(provider && latestBlockNumber){
                 try{
-                    const filter = contract.filters[name](null, account);
+                    const filter = contract.filters[eventName](...accountArgs);
                     const connectedContract = contract.connect(provider);
                     //latestBlockNumber, 'latest'
                     const result = await connectedContract.queryFilter(filter);
@@ -31,8 +32,8 @@ export function useContractEvents(contract: Contract, name: string, account: str
                 }
             }
         }
-        account && latestBlockNumber && fetchEvents(contract);
-    }, [account, provider, latestBlockNumber])
+        latestBlockNumber && fetchEvents(contract);
+    }, [provider, latestBlockNumber])
 
     return events;
 }

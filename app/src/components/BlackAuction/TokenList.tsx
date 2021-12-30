@@ -7,17 +7,35 @@ import {
 //import { AddIcon } from "@chakra-ui/icons"
 import { TokenCard } from "./TokenCard";
 import Gallery, { PhotoProps } from "react-photo-gallery";
-import { useContractEvents } from '../../hooks';
+import { useBlackDeedEvents } from '../../hooks/BlackDeed/useContractEvents';
 import { Contract, Event } from '@ethersproject/contracts'
 import { useContractCalls, useEthers } from '@usedapp/core'
 import { toHttpPath } from "../../utils";
 import styled from "styled-components";
 import CreateDeedModal from "./CreateDeedModal";
+//import Config from "../../config";
+
+
+function useAccountTokens(contract: Contract, account: string | null | undefined) {
+
+  const toEvents = useBlackDeedEvents("Transfer", null, account);
+  //const toEvents = useBlackDeedEvents("Transfer", [account, Config.AUCTIONREPOSITORY_ADDRESS], null);
+
+  toEvents.map(event => {
+    const tokenId = event.args?.tokenId;
+    if(tokenId) {
+      console.log(tokenId.toNumber())
+    }
+  })
+
+  return { toEvents }
+}
 
 function useTokensURI(contract: Contract, account: string | null | undefined): PhotoProps[] {
 
   const [tokensURI, settokensURI] = useState<PhotoProps[]>([])
-  const transferEvents = useContractEvents(contract, "Transfer", account);
+  const transferEvents = useBlackDeedEvents("Transfer", null, account);
+
   const callResult = useContractCalls(
     transferEvents
       ? transferEvents.map((event: Event) => ({
@@ -31,12 +49,18 @@ function useTokensURI(contract: Contract, account: string | null | undefined): P
 
   useEffect(() => {
     const list = callResult
+      .map((result, index) => {
+        if(result){
+          const deedId = transferEvents[index].args?.tokenId;
+          const [uri] = result as string[];
+          return ({ deedId: deedId.toNumber(), src: toHttpPath(uri), width: 1, height: 1 })
+        }
+        return result;
+      })
       .filter(t => t)
-      .map(result => {
-        const [uri] = result as string[];
-        return ({ src: toHttpPath(uri), width: 1, height: 1 })
-      }).reverse()
+      .reverse()
 
+      
     if (list.length > 0) {
       settokensURI(list as PhotoProps[])
     }
@@ -53,7 +77,13 @@ const TokenList = ({ contract }: TokenListProps) => {
 
   const { account } = useEthers()
   const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
+
   const tokenList = useTokensURI(contract, account)
+
+  const tokens = useAccountTokens(contract, account)
+  if(tokens.toEvents.length > 0)
+    console.log("useAccountTokens", tokens)
+
 
   const imageRenderer = useCallback(
     ({ index, key, photo }) => {

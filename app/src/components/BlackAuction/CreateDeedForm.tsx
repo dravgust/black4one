@@ -1,25 +1,17 @@
 import React, { useState, useEffect, useRef } from "react"
-import { useEthers, useContractFunction } from '@usedapp/core'
+import { useEthers } from '@usedapp/core'
+import { useContractMethod } from "../../hooks"
 import { Form, Field, FieldProps, FormikHelpers } from "formik"
 import FormikWithRef from "../FormikWithRef"
 import {
   chakra, FormLabel, FormErrorMessage, FormControl, Input, Button, useColorModeValue, Stack, SimpleGrid, GridItem,
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
 } from '@chakra-ui/react';
-import Config from '../../config'
-import { utils } from 'ethers'
-import { Contract } from '@ethersproject/contracts'
 import { ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils";
 import { DeedMetadata } from "../../models/DeedRepository";
 import { create } from 'ipfs-http-client'
 import * as yup from "yup";
 import { ModalProps } from "../../models/types";
-
-const contractAddress = Config.DEEDREPOSITORY_ADDRESS;
-const contractAbi = Config.DEEDREPOSITORY_ABI;
-
-const contractInterface = new utils.Interface(contractAbi)
-const contract = new Contract(contractAddress, contractInterface);
 
 interface FormValues {
   tokenName: string
@@ -56,7 +48,7 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
   const [file, setFile] = useState<File | null>(null)
   const formikRef = useRef<FormikHelpers<FormValues>>()
 
-  const { state, send } = useContractFunction(contract, 'registerDeed', { transactionName: 'Register Deed' });
+  const { state: registerDeedState, send : registerDeed } = useContractMethod('registerDeed');
 
   /*const mintToken = async (ownerAddress: string, metadataURI: string) => {
     metadataURI = stripIpfsUriPrefix(metadataURI)
@@ -131,7 +123,8 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
       console.log("ssetGatewayURL", ssetGatewayURL)
       console.log("metadataGatewayURL", metadataGatewayURL)
 
-      send(stripIpfsUriPrefix(metadataURI), { from: account })
+      //send(stripIpfsUriPrefix(metadataURI), { from: account })
+      registerDeed(stripIpfsUriPrefix(metadataURI), { from: account })
 
       setDisabled(true)
     }
@@ -155,16 +148,16 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
   }
 
   useEffect(() => {
-    console.log("[DeedRepositoryForm] state: ", state);
-    if (state.status != 'Mining') {  
+    console.log("[DeedRepositoryForm] state: ", registerDeedState);
+    if (registerDeedState.status != 'Mining') {  
       setDisabled(false)
 
-      if(state.status == 'Success'){
+      if(registerDeedState.status == 'Success'){
         formikRef.current?.resetForm();
         onClose()
       }
     }
-  }, [state])
+  }, [registerDeedState])
 
   const FILE_SIZE = 500 * 1024;
   const SUPPORTED_FORMATS = [
