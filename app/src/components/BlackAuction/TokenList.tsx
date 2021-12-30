@@ -16,15 +16,16 @@ import CreateDeedModal from "./CreateDeedModal";
 //import Config from "../../config";
 
 
-function useAccountTokens(contract: Contract, account: string | null | undefined) {
+function useAccountTokens() {
 
-  const toEvents = useBlackDeedEvents("Transfer", null, account);
+  const toEvents = useBlackDeedEvents("Transfer");
+  //const toEvents = useBlackDeedEvents("Transfer", null, '0x6f807535408B31C79A854985ad98d63A42C6C6E2');
   //const toEvents = useBlackDeedEvents("Transfer", [account, Config.AUCTIONREPOSITORY_ADDRESS], null);
 
   toEvents.map(event => {
     const tokenId = event.args?.tokenId;
     if(tokenId) {
-      console.log(tokenId.toNumber())
+      console.log(`TO: ${event.args}`)
     }
   })
 
@@ -80,7 +81,7 @@ const TokenList = ({ contract }: TokenListProps) => {
 
   const tokenList = useTokensURI(contract, account)
 
-  const tokens = useAccountTokens(contract, account)
+  const tokens = useAccountTokens()
   if(tokens.toEvents.length > 0)
     console.log("useAccountTokens", tokens)
 
