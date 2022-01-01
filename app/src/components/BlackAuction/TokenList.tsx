@@ -9,27 +9,35 @@ import { TokenCard } from "./TokenCard";
 import Gallery, { PhotoProps } from "react-photo-gallery";
 import { useBlackDeedEvents } from '../../hooks/BlackDeed/useContractEvents';
 import { Contract, Event } from '@ethersproject/contracts'
-import { useContractCalls, useEthers } from '@usedapp/core'
+import { useContractCalls, useEthers, useTokenBalance } from '@usedapp/core'
 import { toHttpPath } from "../../utils";
 import styled from "styled-components";
 import CreateDeedModal from "./CreateDeedModal";
-//import Config from "../../config";
+import Config from "../../config";
+import { useTokenOfOwnerByIndex } from "../../hooks/BlackDeed/useContractEvents";
 
 
-function useAccountTokens() {
+function useTokens() {
 
-  const toEvents = useBlackDeedEvents("Transfer");
-  //const toEvents = useBlackDeedEvents("Transfer", null, '0x6f807535408B31C79A854985ad98d63A42C6C6E2');
-  //const toEvents = useBlackDeedEvents("Transfer", [account, Config.AUCTIONREPOSITORY_ADDRESS], null);
+  const [balance, setBalance] = useState<number>()
+  const balanceResult = useTokenBalance(Config.DEEDREPOSITORY_ADDRESS, '0x6f807535408B31C79A854985ad98d63A42C6C6E2')
+  const tokenOfOwnerByIndex = useTokenOfOwnerByIndex('0x6f807535408B31C79A854985ad98d63A42C6C6E2', 0)
 
-  toEvents.map(event => {
-    const tokenId = event.args?.tokenId;
-    if(tokenId) {
-      console.log(`TO: ${event.args}`)
+  useEffect(() => {
+    if(balanceResult){
+      const length = balanceResult.toNumber() - 1;
+      //for(let i = 0; i <= length; i++){
+        //let uri = tokenOfOwnerByIndex('0x6f807535408B31C79A854985ad98d63A42C6C6E2', i)
+      //}
+
+      console.log(length)
+      console.log(tokenOfOwnerByIndex)
+
+      setBalance(balanceResult.toNumber())
     }
-  })
+  }, [balanceResult])
 
-  return { toEvents }
+  return { balance }
 }
 
 function useTokensURI(contract: Contract, account: string | null | undefined): PhotoProps[] {
@@ -81,10 +89,8 @@ const TokenList = ({ contract }: TokenListProps) => {
 
   const tokenList = useTokensURI(contract, account)
 
-  const tokens = useAccountTokens()
-  if(tokens.toEvents.length > 0)
-    console.log("useAccountTokens", tokens)
-
+  const tokens = useTokens()
+  console.log(tokens)
 
   const imageRenderer = useCallback(
     ({ index, key, photo }) => {
@@ -129,7 +135,7 @@ const TokenList = ({ contract }: TokenListProps) => {
         </Button>
         <CreateDeedModal isOpen={isCreateDeedOpen} onClose={onCreateDeedClose} />
       </Box>
-      <Box>
+      <Box w={"full"}>
         {account && tokenList.length !== 0
           ? <Gallery photos={tokenList} margin={5} direction="column" renderImage={imageRenderer} />
           : <EmptyDescription>There are no tokens in your cart</EmptyDescription>}
