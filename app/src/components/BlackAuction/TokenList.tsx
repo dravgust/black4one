@@ -16,6 +16,9 @@ import CreateDeedModal from "./CreateDeedModal";
 import Config from "../../config";
 import { useTokenOfOwnerByIndex } from "../../hooks/BlackDeed/useContractEvents";
 
+export function range(size:number, startAt:number = 0):ReadonlyArray<number> {
+  return [...Array(size).keys()].map(i => i + startAt);
+}
 
 function useTokens() {
 
@@ -23,15 +26,28 @@ function useTokens() {
   const balanceResult = useTokenBalance(Config.DEEDREPOSITORY_ADDRESS, '0x6f807535408B31C79A854985ad98d63A42C6C6E2')
   const tokenOfOwnerByIndex = useTokenOfOwnerByIndex('0x6f807535408B31C79A854985ad98d63A42C6C6E2', 0)
 
+  /*const callResult = useContractCalls(
+    transferEvents
+      ? transferEvents.map((event: Event) => ({
+        abi: contract.interface,
+        address: contract.address,
+        method: 'tokenURI(uint256)',
+        args: [event.args?.tokenId],
+      }))
+      : []
+  )*/
+
   useEffect(() => {
     if(balanceResult){
-      const length = balanceResult.toNumber() - 1;
+      const indexRange = range(balanceResult.toNumber())
+
       //for(let i = 0; i <= length; i++){
         //let uri = tokenOfOwnerByIndex('0x6f807535408B31C79A854985ad98d63A42C6C6E2', i)
       //}
 
-      console.log(length)
-      console.log(tokenOfOwnerByIndex)
+      console.log("length", length)
+      console.log("result", tokenOfOwnerByIndex)
+      console.log("array",indexRange)
 
       setBalance(balanceResult.toNumber())
     }
