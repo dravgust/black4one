@@ -5,6 +5,7 @@ import { utils } from 'ethers'
 import Config from '../config';
 import { useContractEvents } from './useContractEvents'
 import { useContractCall, useContractCalls, useEthers } from '@usedapp/core'
+import { Auction, TokenAuction } from '../models/AuctionRepository'
 
 const contractAddress = Config.AUCTIONREPOSITORY_ADDRESS;
 const contractAbi = Config.AUCTIONREPOSITORY_ABI;
@@ -50,35 +51,33 @@ export function useAuctionsById(auctionIds: number[] | undefined) {
     return auctions;
 }
 
+ /* eslint-disable @typescript-eslint/no-explicit-any */
 export function useAuctionList(address: string | null | undefined, activeOnly: boolean = false) {
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    const [auctionList, setAuctionList] = useState<any[]>([])
+    const [auctionList, setAuctionList] = useState<TokenAuction[]>([])
     const { library: provider } = useEthers();
     const auctionIds = useAuctionsOf(address)
     const auctions = useAuctionsById(auctionIds)
 
     useEffect(() => {
 
-        const getAuctionData = async (auctions: any[]) => {
+        const getAuctionData = async (auctions: any[] | undefined) => {
             if (provider && auctions) {
                 try {
                     const list = auctions
-                        .filter((a: any) => a && (!activeOnly || a.active))
+                        .filter((a: Auction) => a && (!activeOnly || a.active))
                         .map(a => ({ ...a }))
 
                     if (list.length > 0) {
                         const connectedContract = tokenContract.connect(provider);
-                        const auctionList = await Promise.all(list.map(async (a) => {
-                            const tokenURI = await connectedContract['tokenURI(uint256)'](a.deedId)
-
+                        const auctionList = await Promise.all(list.map(async (a: Auction) => {
+                        const tokenURI = await connectedContract['tokenURI(uint256)'](a.deedId)
                             return {
                                 ...a,
                                 tokenId: a.deedId.toNumber(),
                                 metadataURI: tokenURI
                             }
                         }))
-
                         setAuctionList(auctionList)
                     }
                 }

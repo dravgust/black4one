@@ -5,6 +5,7 @@ import { DeedProperties } from "../../models/DeedRepository"
 import { useContractMethod } from "../../hooks";
 import { useEthers } from "@usedapp/core"
 import Config from "../../config";
+//import { TokenAuction } from "../../models/AuctionRepository"
 
 type CreateAucionProps = {
   deedId: number,
