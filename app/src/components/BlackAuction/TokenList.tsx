@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, /*useState*/ } from "react"
+import React, { useCallback,} from "react"
 import {
   VStack, Box, Text, Heading, useDisclosure,
   useColorModeValue,
@@ -6,107 +6,38 @@ import {
 } from "@chakra-ui/react"
 //import { AddIcon } from "@chakra-ui/icons"
 import { TokenCard } from "./TokenCard";
-import Gallery, { PhotoProps } from "react-photo-gallery";
-import { useBlackDeedEvents } from '../../hooks/BlackDeed/useContractEvents';
-import { Contract, Event } from '@ethersproject/contracts'
-import { useContractCalls, useEthers, useTokenBalance } from '@usedapp/core'
-import { toHttpPath } from "../../utils";
+import Gallery/*, { PhotoProps }*/ from "react-photo-gallery";
+import { useBlackDeedList } from '../../hooks/useDeedRepository';
+import { useEthers } from '@usedapp/core'
+import { toHttpPath, } from "../../utils";
 import styled from "styled-components";
 import CreateDeedModal from "./CreateDeedModal";
-import Config from "../../config";
-import { useTokenOfOwnerByIndex } from "../../hooks/BlackDeed/useContractEvents";
+import { useAuctionList } from '../../hooks/useAuctionRepository'
 
-export function range(size:number, startAt:number = 0):ReadonlyArray<number> {
-  return [...Array(size).keys()].map(i => i + startAt);
-}
 
-function useTokens() {
-
-  const [balance, setBalance] = useState<number>()
-  const balanceResult = useTokenBalance(Config.DEEDREPOSITORY_ADDRESS, '0x6f807535408B31C79A854985ad98d63A42C6C6E2')
-  const tokenOfOwnerByIndex = useTokenOfOwnerByIndex('0x6f807535408B31C79A854985ad98d63A42C6C6E2', 0)
-
-  /*const callResult = useContractCalls(
-    transferEvents
-      ? transferEvents.map((event: Event) => ({
-        abi: contract.interface,
-        address: contract.address,
-        method: 'tokenURI(uint256)',
-        args: [event.args?.tokenId],
-      }))
-      : []
-  )*/
-
-  useEffect(() => {
-    if(balanceResult){
-      const indexRange = range(balanceResult.toNumber())
-
-      //for(let i = 0; i <= length; i++){
-        //let uri = tokenOfOwnerByIndex('0x6f807535408B31C79A854985ad98d63A42C6C6E2', i)
-      //}
-
-      console.log("length", length)
-      console.log("result", tokenOfOwnerByIndex)
-      console.log("array",indexRange)
-
-      setBalance(balanceResult.toNumber())
-    }
-  }, [balanceResult])
-
-  return { balance }
-}
-
-function useTokensURI(contract: Contract, account: string | null | undefined): PhotoProps[] {
-
-  const [tokensURI, settokensURI] = useState<PhotoProps[]>([])
-  const transferEvents = useBlackDeedEvents("Transfer", null, account);
-
-  const callResult = useContractCalls(
-    transferEvents
-      ? transferEvents.map((event: Event) => ({
-        abi: contract.interface,
-        address: contract.address,
-        method: 'tokenURI(uint256)',
-        args: [event.args?.tokenId],
-      }))
-      : []
-  )
-
-  useEffect(() => {
-    const list = callResult
-      .map((result, index) => {
-        if(result){
-          const deedId = transferEvents[index].args?.tokenId;
-          const [uri] = result as string[];
-          return ({ deedId: deedId.toNumber(), src: toHttpPath(uri), width: 1, height: 1 })
-        }
-        return result;
-      })
-      .filter(t => t)
-      .reverse()
-
-      
-    if (list.length > 0) {
-      settokensURI(list as PhotoProps[])
-    }
-  }, [callResult, account])
-
-  return tokensURI;
-}
-
-type TokenListProps = {
-  contract: Contract,
-}
-
-const TokenList = ({ contract }: TokenListProps) => {
+const TokenList = () => {
 
   const { account } = useEthers()
   const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
 
-  const tokenList = useTokensURI(contract, account)
+  const {tokens} = useBlackDeedList(account)
+  const auctions = useAuctionList(account, true)
 
-  const tokens = useTokens()
-  console.log(tokens)
+  const tokenList = tokens.map(token => ({
+     deedId: token.tokenId,
+      src: toHttpPath(token.metadataURI),
+       width: 1,
+       height: 1
+     })).reverse()
+
+
+  const auctionList = auctions.map(a => ({
+    deedId: a.tokenId,
+     src: toHttpPath(a.metadataURI),
+      width: 1,
+      height: 1
+    })).reverse()
+
 
   const imageRenderer = useCallback(
     ({ index, key, photo }) => {
@@ -155,6 +86,11 @@ const TokenList = ({ contract }: TokenListProps) => {
         {account && tokenList.length !== 0
           ? <Gallery photos={tokenList} margin={5} direction="column" renderImage={imageRenderer} />
           : <EmptyDescription>There are no tokens in your cart</EmptyDescription>}
+      </Box>
+      <Box w={"full"}>
+        {account && auctionList.length !== 0
+          ? <Gallery photos={auctionList} margin={5} direction="column" renderImage={imageRenderer} />
+          : <EmptyDescription>There are no auctions</EmptyDescription>}
       </Box>
     </VStack>
   )
