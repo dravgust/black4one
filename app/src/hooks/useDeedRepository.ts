@@ -3,7 +3,7 @@ import { Contract } from '@ethersproject/contracts'
 import { utils } from 'ethers'
 import Config from '../config';
 import { useContractEvents } from './useContractEvents'
-import { useContractCall } from '@usedapp/core'
+import { useContractCall} from '@usedapp/core'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useTokenList } from './useTokenList'
 import { DeedRepository } from '../models/DeedRepository';
