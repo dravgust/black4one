@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from "react"
-import { Contract } from '@ethersproject/contracts'
 import { useEthers, useTokenBalance } from '@usedapp/core'
 import { range } from "../utils";
 import { BigNumber } from "ethers";
+import { DeedRepository } from '../models/DeedRepository';
 
 
 type TokenProps = {
@@ -11,26 +11,26 @@ type TokenProps = {
     metadataURI: string
 }
 
-export function useTokenList(contract: Contract, account: string | null | undefined) {
+export function useTokenList(tokenRepository: DeedRepository, account: string | null | undefined) {
 
     const [tokens, setTokens] = useState<TokenProps[]>([])
     const { library: provider } = useEthers();
 
-    const balanceResult = useTokenBalance(contract.address, account)
+    const balanceResult = useTokenBalance(tokenRepository.getContractAddress(), account)
 
     useEffect(() => {
         const getTokensOfOwner = async (balance: BigNumber | undefined) => {
-            if (provider && balance) {
+            if (provider && account && balance) {
                 try {
-                    const connectedContract = contract.connect(provider);
-                    //console.log("[useTokenList] balance", balance)
+                    tokenRepository.setProvider(provider)
+                    console.log("[useTokenList] balance", balance)
 
                     const tokenList = await Promise.all(range(balance.toNumber()).map(async (i) => {
-                        const tokenId = await connectedContract['tokenOfOwnerByIndex'](account, i)
-                        const tokenURI = await connectedContract['tokenURI(uint256)'](tokenId)
+                        const tokenId = await tokenRepository.getTokenOfOwnerByIndex(account, i)
+                        const tokenURI = await tokenRepository.getTokenURI(tokenId)
                        
                         return { 
-                            tokenId: tokenId.toNumber(),
+                            tokenId: tokenId,
                              metadataURI: tokenURI
                          }
                     }))
