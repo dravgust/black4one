@@ -23,8 +23,8 @@ export function useTokenList(tokenRepository: DeedRepository, account: string | 
             if (provider && account && balance) {
                 try {
                     tokenRepository.setProvider(provider)
-                    console.log("[useTokenList] balance", balance)
-
+                    //console.log("[useTokenList] balance", balance)
+                    //console.log(await tokenRepository.getCurrentBlock())
                     const tokenList = await Promise.all(range(balance.toNumber()).map(async (i) => {
                         const tokenId = await tokenRepository.getTokenOfOwnerByIndex(account, i)
                         const tokenURI = await tokenRepository.getTokenURI(tokenId)

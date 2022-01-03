@@ -1,7 +1,7 @@
 import { ERC721ExtProperties, ERC721ExtMetadata, KeyValue } from './types'
-import { utils, Contract, BigNumber } from 'ethers'
-import { Web3Provider } from '@ethersproject/providers'
+import { BigNumber } from 'ethers'
 import Config from '../config';
+import { Repository } from './Repository'
 
 export class DeedProperties implements ERC721ExtProperties {
     public name: string
@@ -37,28 +37,13 @@ export class DeedMetadata implements ERC721ExtMetadata {
     }
 }
 
-export class DeedRepository {
-    private _contract : Contract;
-    private _web3Contract : Contract | null = null;
-
+export class DeedRepository extends Repository{
     constructor(){
-        const contractInterface = new utils.Interface(Config.DEEDREPOSITORY_ABI)
-        this._contract = new Contract(Config.DEEDREPOSITORY_ADDRESS, contractInterface);
+        super(Config.DEEDREPOSITORY_ADDRESS, Config.DEEDREPOSITORY_ABI)
     }
 
-    setProvider(provider: Web3Provider){
-        this._web3Contract = this._contract.connect(provider);
-    }
-
-    getContract(): Contract {
-        if(this._web3Contract == null)
-            throw new Error("Web3Provider not set");
-
-        return this._web3Contract;
-    }
-
-    getContractAddress(): string {
-        return this._contract.address;
+    getCurrentBlock(): Promise<number> {
+        return this.getProvider().getBlockNumber()
     }
 
     async getTokenOfOwnerByIndex(account: string, index: number | BigNumber): Promise<number> {
