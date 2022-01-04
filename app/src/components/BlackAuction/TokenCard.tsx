@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { chakra, Button, useColorModeValue, Box} from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { DeedProperties } from "../../models/types"
-import { useDeedContractMethod } from "../../hooks/useDeedRepository";
+import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
 import { useEthers } from "@usedapp/core"
 import Config from "../../config";
 //import { TokenAuction } from "../../models/AuctionRepository"
@@ -22,7 +22,7 @@ export const CreateAucion = ({deedId}: CreateAucionProps) => {
 
   const { account } = useEthers()
   const [disabled, setDisabled] = useState(false)
-  const { state: transferDeedState, send: transferDeed } = useDeedContractMethod("transferFrom")
+  const { state: transferDeedState, send: transferDeed } = useBlackDeedMethod("transferFrom")
 
   function onClick() {
     if(account){
@@ -190,6 +190,7 @@ export const TokenCard = ({
             textTransform="uppercase"
             color={useColorModeValue("gray.800", "white")}
             letterSpacing={1}
+            _hover={{opacity:1}}
           >
             #{photo.deedId} {metadata.name}
           </chakra.h3>

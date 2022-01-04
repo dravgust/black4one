@@ -10,18 +10,17 @@ import { range } from "../utils";
 import { useContractEvents } from './useContract'
 import { useContractMethod } from '.';
 
+type TokenProps = {
+  tokenId: number,
+  metadataURI: string
+}
+
 const contractInterface = new utils.Interface(Config.DEEDREPOSITORY_ABI)
 const contract = new Contract(Config.DEEDREPOSITORY_ADDRESS, contractInterface);
 
- /* eslint-disable @typescript-eslint/no-explicit-any */
- export function useBlackDeedEvents(eventName: string, ...accountArgs : any) {
-  return useContractEvents(contract, eventName, ...accountArgs);
-}
-
-export function useDeedContractMethod(methodName: string) {
-  const { state, send } = useContractMethod(contract, methodName);
-  return { state, send };
-}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const useBlackDeedEvents = (eventName: string, ...accountArgs : any) =>  useContractEvents(contract, eventName, ...accountArgs)
+export const useBlackDeedMethod = (methodName: string) => useContractMethod(contract, methodName)
 
 export const useTokenURI = (tokenId: number | BigNumber | Falsy) => {
   const [tokenURI] = useContractCall(
@@ -45,11 +44,6 @@ export const useTokenOfOwnerByIndex = (index: number | BigNumber) => {
       args: [account, index]
     }) ?? []
   return tokenURI
-}
-
-type TokenProps = {
-  tokenId: number,
-  metadataURI: string
 }
 
 export const useTokensOfOwner = () => {
@@ -92,15 +86,15 @@ export const useTokensOfOwner = () => {
 
 const DeedRepository = () => {
 
-  const { library: account } = useEthers()
-  const { state: stateCreate, send: sendCreate } = useContractMethod(contract, 'registerDeed');
+  const { account } = useEthers()
+  const { state: registerState, send: registerDeed } = useContractMethod(contract, 'registerDeed');
 
   const RegisterDeed = async (deedURI: string) => {
     console.log("[useDeedRepository] call create function")
-    const result = await sendCreate(deedURI, { from: account });
+    const result = await registerDeed(deedURI, { from: account });
     console.log("result=", result);
-    console.log("result state=", stateCreate);
-    return stateCreate;
+    console.log("result state=", registerState);
+    return registerState;
   }
 
   return { RegisterDeed }
