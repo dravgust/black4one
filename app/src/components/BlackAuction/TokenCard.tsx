@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
-import { DeedProperties } from "../../models/DeedRepository"
-import { useContractMethod } from "../../hooks";
+import { DeedProperties } from "../../models/types"
+import { useDeedContractMethod } from "../../hooks/useDeedRepository";
 import { useEthers } from "@usedapp/core"
 import Config from "../../config";
 //import { TokenAuction } from "../../models/AuctionRepository"
@@ -18,7 +18,7 @@ export const CreateAucion = ({deedId}: CreateAucionProps) => {
 
   const { account } = useEthers()
   const [disabled, setDisabled] = useState(false)
-  const { state: transferDeedState, send: transferDeed } = useContractMethod("transferFrom")
+  const { state: transferDeedState, send: transferDeed } = useDeedContractMethod("transferFrom")
 
   function onClick() {
     if(account){

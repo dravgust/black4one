@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import { useEthers } from '@usedapp/core'
-import { useContractMethod } from "../../hooks"
+import { useDeedContractMethod } from "../../hooks/useDeedRepository"
 import { Form, Field, FieldProps, FormikHelpers } from "formik"
 import FormikWithRef from "../FormikWithRef"
 import {
@@ -8,7 +8,7 @@ import {
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
 } from '@chakra-ui/react';
 import { ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils";
-import { DeedMetadata } from "../../models/DeedRepository";
+import { DeedMetadata } from "../../models/types";
 import { create } from 'ipfs-http-client'
 import * as yup from "yup";
 import { ModalProps } from "../../models/types";
@@ -48,7 +48,7 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
   const [file, setFile] = useState<File | null>(null)
   const formikRef = useRef<FormikHelpers<FormValues>>()
 
-  const { state: registerDeedState, send : registerDeed } = useContractMethod('registerDeed');
+  const { state: registerDeedState, send : registerDeed } = useDeedContractMethod('registerDeed');
 
   /*const mintToken = async (ownerAddress: string, metadataURI: string) => {
     metadataURI = stripIpfsUriPrefix(metadataURI)

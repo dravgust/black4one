@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useBlockNumber, useEthers } from '@usedapp/core'
+import { useBlockNumber, useEthers, useContractFunction } from '@usedapp/core'
 import { Contract, Event } from '@ethersproject/contracts'
+
+export function useContractMethod(contract: Contract, methodName: string) {
+    const { state, send } = useContractFunction(contract, methodName, { transactionName: methodName });
+    return { state, send };
+}
 
 /*type FilterProps = {
     to?: string | null | undefined,

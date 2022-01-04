@@ -3,18 +3,15 @@ import { useState, useEffect } from 'react';
 import { Contract } from '@ethersproject/contracts'
 import { utils } from 'ethers'
 import Config from '../config';
-import { useContractEvents } from './useContractEvents'
+import { useContractEvents } from './useContract'
 import { useContractCall, useContractCalls, useEthers } from '@usedapp/core'
 import { Auction, TokenAuction } from '../models/AuctionRepository'
-import { DeedRepository } from '../models/DeedRepository';
 
 const contractAddress = Config.AUCTIONREPOSITORY_ADDRESS;
 const contractAbi = Config.AUCTIONREPOSITORY_ABI;
 
 const contractInterface = new utils.Interface(contractAbi)
 const contract = new Contract(contractAddress, contractInterface);
-
-const tokenRepository = new DeedRepository();
 
 export function useBlackAuctionEvents(eventName: string, account: string | null | undefined = null) {
     return useContractEvents(contract, eventName, account);
@@ -66,13 +63,13 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
                         .map(a => ({ ...a }))
 
                     if (list.length > 0) {
-                        tokenRepository.setProvider(provider)
+                        const connectedContract = contract.connect(provider)
                         const auctionList = await Promise.all(list.map(async (a: Auction) => {
-                        const tokenURI = await tokenRepository.getTokenURI(a.deedId)
+                        const metadataURI = await  connectedContract.tokenURI(a.deedId)     
                             return {
                                 ...a,
                                 tokenId: a.deedId.toNumber(),
-                                metadataURI: tokenURI
+                                metadataURI
                             }
                         }))
                         setAuctionList(auctionList)

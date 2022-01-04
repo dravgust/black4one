@@ -7,7 +7,7 @@ import {
 //import { AddIcon } from "@chakra-ui/icons"
 import { TokenCard } from "./TokenCard";
 import Gallery/*, { PhotoProps }*/ from "react-photo-gallery";
-import { useBlackDeedList } from '../../hooks/useDeedRepository';
+import { useTokensOfOwner } from '../../hooks/useDeedRepository';
 import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
 import styled from "styled-components";
@@ -20,7 +20,7 @@ const TokenList = () => {
   const { account } = useEthers()
   const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
 
-  const {tokens} = useBlackDeedList(account)
+  const tokens = useTokensOfOwner()
 
   //const [tokenId, setTokenId] = useState<number>()
   //const tokenURI = useTokenURI(tokenId)
@@ -41,7 +41,7 @@ const TokenList = () => {
     
     
   }
-
+console.log(tokens)
   const tokenList = tokens.map(token => ({
      deedId: token.tokenId,
       src: toHttpPath(token.metadataURI),
