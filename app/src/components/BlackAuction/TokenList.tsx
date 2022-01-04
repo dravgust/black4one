@@ -32,7 +32,7 @@ const TokenList = () => {
       return (
         <TokenCard
           index={index}
-          key={key}
+          key={`${key}_${index}`}
           photo={photo}
           margin={"2px"}
           left={left}

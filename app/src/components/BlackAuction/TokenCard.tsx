@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, useColorModeValue, Box} from "@chakra-ui/react"
+import { chakra, Button, useColorModeValue, Box} from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { DeedProperties } from "../../models/types"
 import { useDeedContractMethod } from "../../hooks/useDeedRepository";
@@ -173,6 +173,27 @@ export const TokenCard = ({
             : { backgroundImage: `url(${metadata.image})`, ...imgStyle }}
             onClick={handleOnClick}
         ></Box>
+        <Box
+          //w={{ base: 56, md: 64 }}
+          w="full"
+          bg={"transparent"}
+          mt={-10}
+          shadow="lg"
+          overflow="hidden"
+        >
+          <chakra.h3
+            bg={useColorModeValue("white", "gray.800")}
+            opacity={0.7}
+            py={2}
+            textAlign="center"
+            fontWeight="bold"
+            textTransform="uppercase"
+            color={useColorModeValue("gray.800", "white")}
+            letterSpacing={1}
+          >
+            #{photo.deedId} {metadata.name}
+          </chakra.h3>
+        </Box>
       <style>{`.not-selected:hover{outline:2px solid #06befa}`}</style>
     </div>
   )
