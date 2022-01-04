@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
+import { Button, useColorModeValue, Box} from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { DeedProperties } from "../../models/types"
 import { useDeedContractMethod } from "../../hooks/useDeedRepository";
@@ -10,6 +10,10 @@ import Config from "../../config";
 type CreateAucionProps = {
   deedId: number,
 };
+
+type CheckmarkProps = {
+  selected: boolean
+}
 
 export const CreateAucion = ({deedId}: CreateAucionProps) => {
 
@@ -56,22 +60,58 @@ export const CreateAucion = ({deedId}: CreateAucionProps) => {
   )
 }
 
-type TokenCardProps = {
-  index: number,
-  photo: TokenCardImage,
+ /* eslint-disable @typescript-eslint/no-explicit-any */
+
+const Checkmark = ({ selected }: CheckmarkProps) => (
+  <div
+    style={
+      selected
+        ? { left: "4px", top: "4px", position: "absolute", zIndex: "1" }
+        : { display: "none" }
+    }
+  >
+    <svg
+      style={{ fill: "white", position: "absolute" }}
+      width="24px"
+      height="24px"
+    >
+      <circle cx="12.5" cy="12.2" r="8.292" />
+    </svg>
+    <svg
+      style={{ fill: "#06befa", position: "absolute" }}
+      width="24px"
+      height="24px"
+    >
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+    </svg>
+  </div>
+);
+
+const imgStyle = {
+  transition: "transform .135s cubic-bezier(0.0,0.0,0.2,1),opacity linear .15s"
+};
+const selectedImgStyle = {
+  transform: "translateZ(0px) scale3d(0.9, 0.9, 1)",
+  transition: "transform .135s cubic-bezier(0.0,0.0,0.2,1),opacity linear .15s"
+};
+const cont: any = {
+  //backgroundColor: "#CBD5E0",
+  cursor: "pointer",
+  overflow: "hidden",
+  position: "relative",
+  left: 0,
+  top: 0,
+  //borderRadius: "20px"
 };
 
-type TokenCardImage = {
-  width: number,
-  height: number,
-  src: string,
-  deedId: number
-}
-
-export const TokenCard = ({ photo }: TokenCardProps) => {
-
-  const bg700 = useColorModeValue('gray.200', 'gray.700')
-  const bg800 = useColorModeValue('gray.300', 'gray.800')
+export const TokenCard = ({ 
+  photo,
+  margin,
+  direction,
+  top,
+  left,
+  selected
+ }: any) => {
 
   const [metadata, setMetadata] = useState<DeedProperties>(DeedProperties.Default)
   
@@ -93,113 +133,47 @@ export const TokenCard = ({ photo }: TokenCardProps) => {
     fetchSource()
   }, [])
 
+  const [isSelected, setIsSelected] = useState(selected);
+  //calculate x,y scale
+  const sx = (100 - (30 / photo.width) * 100) / 100;
+  const sy = (100 - (30 / photo.height) * 100) / 100;
+  selectedImgStyle.transform = `translateZ(0px) scale3d(${sx}, ${sy}, 1)`;
+
+  if (direction === "column") {
+    cont.position = "absolute";
+    cont.left = left;
+    cont.top = top;
+  }
+
+  const handleOnClick = () => {
+    setIsSelected(!isSelected);
+  };
+
+  useEffect(() => {
+    setIsSelected(selected);
+  }, [selected]);
 
   return (
-    <Flex mb={1}>
-      <Flex
-        direction="column"
-        //justifyContent="center"
-        alignItems="center"
-      //w="sm"
-      //mx={1}
-      //mx="auto"
-      //mb={5}
-      >
-        <Box
+    <div
+      style={{ margin, height: photo.height, width: photo.width, ...cont }}
+      className={!isSelected ? "not-selected" : ""}
+    >
+      <Checkmark selected={isSelected ? true : false} />
+      <Box
           bg="gray.300"
-          //w={64}
-          h={64}
+          //w={photo.width}
+          h={photo.height}
           w="full"
-          roundedLeft={"xl"}
+          //roundedLeft={"xl"}
           shadow="md"
           bgSize="cover"
           bgPos="center"
-          style={{
-            backgroundImage:
-              `url(${metadata.image})`,
-          }}
+          style={isSelected 
+            ? { backgroundImage: `url(${metadata.image})`, ...imgStyle, ...selectedImgStyle } 
+            : { backgroundImage: `url(${metadata.image})`, ...imgStyle }}
+            onClick={handleOnClick}
         ></Box>
-
-        <Box
-          //w={{ base: 56, md: 64 }}
-          w="sm"
-          bg={"transparent"}
-          mt={-10}
-          shadow="lg"
-          //rounded="lg"
-          roundedBottomLeft={"xl"}
-          overflow="hidden"
-        >
-          <chakra.h3
-            bg={useColorModeValue("white", "gray.800")}
-            opacity={0.8}
-            py={2}
-            textAlign="center"
-            fontWeight="bold"
-            textTransform="uppercase"
-            color={useColorModeValue("gray.800", "white")}
-            letterSpacing={1}
-          >
-            {metadata.name}
-          </chakra.h3>
-        </Box>
-      </Flex>
-
-      <Box      
-        roundedRight={"xl"}
-        w="full"
-        border="1px"
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.100', 'gray.600')}
-        p={1} 
-        shadow="md">
-
-        <Flex
-          alignItems="start"
-          direction={"column"}
-          justifyContent="space-between"
-          py={2}
-          px={3}
-          bg={useColorModeValue("gray.200", "gray.700")}
-          w="full"
-          roundedRight="xl"
-          h='full'
-        >
-          <chakra.span
-            color={useColorModeValue("gray.800", "gray.200")}
-          >
-            {metadata.description}
-          </chakra.span>
-          <chakra.span
-            color={useColorModeValue("gray.800", "gray.200")}
-          >
-            DeedID: {photo.deedId}
-          </chakra.span>
-
-          <ButtonGroup variant='outline' spacing='1' pt={2} borderTop="1px" borderColor={bg800}>
-
-           <CreateAucion deedId={photo.deedId}/>
-
-            <chakra.button
-              bg={bg800}
-              border="1px solid transparent"
-              _hover={{
-                border: "1px",
-                borderStyle: "solid",
-                borderColor: "whiteAlpha.700",
-                backgroundColor: { bg700 },
-              }}
-              borderRadius="xl"
-              m="1px"
-              px={3}
-              height="38px"
-            >
-              Cancel Aucion
-            </chakra.button>
-
-          </ButtonGroup>
-        </Flex>
-      </Box>
-    </Flex>
+      <style>{`.not-selected:hover{outline:2px solid #06befa}`}</style>
+    </div>
   )
 }

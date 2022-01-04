@@ -12,7 +12,6 @@ import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
 import styled from "styled-components";
 import CreateDeedModal from "./CreateDeedModal";
-import { useDeedRepository } from "../../hooks/useDeedRepository3";
 
 
 const TokenList = () => {
@@ -21,41 +20,23 @@ const TokenList = () => {
   const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
 
   const tokens = useTokensOfOwner()
-
-  //const [tokenId, setTokenId] = useState<number>()
-  //const tokenURI = useTokenURI(tokenId)
-  //console.log("tokenID:1", tokenId)
-
-  /*const onClick = async () => {
-    setTokenId(1)
-    console.log("tokenID:2", tokenId)
-    alert(JSON.stringify(tokenURI))
-  }*/
-
-  const { getTokensOfOwner } = useDeedRepository()
-  const onClick = async () => {
-    if(account){
-      const tokenURI = await getTokensOfOwner(account)
-      console.log("tokenID:2", tokenURI)
-    }
-    
-    
-  }
-console.log(tokens)
   const tokenList = tokens.map(token => ({
      deedId: token.tokenId,
       src: toHttpPath(token.metadataURI),
-       width: 1,
-       height: 1
+       width: 64,
+       height: 64
      })).reverse()
 
   const imageRenderer = useCallback(
-    ({ index, key, photo }) => {
+    ({ index, key, photo, left, top }) => {
       return (
         <TokenCard
           index={index}
           key={key}
           photo={photo}
+          margin={"2px"}
+          left={left}
+          top={top}
         />
       )
     },
@@ -68,7 +49,6 @@ console.log(tokens)
       //bg={useColorModeValue("white", "gray.700")}
       py={5}
     >
-      <Button onClick={onClick}>Click me!</Button>
       <Box display={"flex"} flexDir={"column"} my={"1.5rem"}>
         <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
           Assets
@@ -95,7 +75,7 @@ console.log(tokens)
       </Box>
       <Box w={"full"}>
         {account && tokenList.length !== 0
-          ? <Gallery photos={tokenList} margin={5} direction="column" renderImage={imageRenderer}/>
+          ? <Gallery photos={tokenList} renderImage={imageRenderer}/>
           : <EmptyDescription>There are no tokens in your cart</EmptyDescription>}
       </Box>
     </VStack>

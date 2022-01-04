@@ -13,6 +13,9 @@ const contractAbi = Config.AUCTIONREPOSITORY_ABI;
 const contractInterface = new utils.Interface(contractAbi)
 const contract = new Contract(contractAddress, contractInterface);
 
+const tokenContractInterface = new utils.Interface(Config.DEEDREPOSITORY_ABI)
+const tokenContract = new Contract(Config.DEEDREPOSITORY_ADDRESS, tokenContractInterface);
+
 export function useBlackAuctionEvents(eventName: string, account: string | null | undefined = null) {
     return useContractEvents(contract, eventName, account);
 }
@@ -63,7 +66,7 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
                         .map(a => ({ ...a }))
 
                     if (list.length > 0) {
-                        const connectedContract = contract.connect(provider)
+                        const connectedContract = tokenContract.connect(provider)
                         const auctionList = await Promise.all(list.map(async (a: Auction) => {
                         const metadataURI = await  connectedContract.tokenURI(a.deedId)     
                             return {

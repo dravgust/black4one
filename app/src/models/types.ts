@@ -59,8 +59,11 @@ export class DeedProperties implements ERC721ExtProperties {
         this.attributes = attributes;
     }
 
-    static Default = () => new DeedProperties("...", "...", "")
-} 
+    static Default = () => new DeedProperties(
+        "...",
+        "...",
+        ""
+    )} 
 
 
 export class DeedMetadata implements ERC721ExtMetadata {

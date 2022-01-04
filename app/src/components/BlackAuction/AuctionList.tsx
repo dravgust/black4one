@@ -3,7 +3,7 @@ import {
   VStack, Box, Text, Heading, useColorModeValue,
 } from "@chakra-ui/react"
 //import { AddIcon } from "@chakra-ui/icons"
-import { TokenCard } from "./TokenCard";
+import { AuctionCard } from "./AuctionCard";
 import Gallery/*, { PhotoProps }*/ from "react-photo-gallery";
 import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
@@ -27,7 +27,7 @@ const AuctionList = () => {
   const imageRenderer = useCallback(
     ({ index, key, photo }) => {
       return (
-        <TokenCard
+        <AuctionCard
           index={index}
           key={key}
           photo={photo}
