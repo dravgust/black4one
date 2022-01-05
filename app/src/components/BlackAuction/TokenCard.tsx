@@ -1,67 +1,13 @@
 import React, { useState, useEffect } from "react"
-import { chakra, Button, useColorModeValue, Box} from "@chakra-ui/react"
+import { chakra, useColorModeValue, Box} from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
-import { DeedProperties } from "../../models/types"
-import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
-import { useEthers } from "@usedapp/core"
-import Config from "../../config";
-//import { TokenAuction } from "../../models/AuctionRepository"
-
-type CreateAucionProps = {
-  deedId: number,
-};
+import { ERC721MetadataExt } from "../../models/types"
 
 type CheckmarkProps = {
   selected: boolean
 }
 
-export const CreateAucion = ({deedId}: CreateAucionProps) => {
-
-  const bg700 = useColorModeValue('gray.200', 'gray.700')
-  const bg800 = useColorModeValue('gray.300', 'gray.800')
-
-  const { account } = useEthers()
-  const [disabled, setDisabled] = useState(false)
-  const { state: transferDeedState, send: transferDeed } = useBlackDeedMethod("transferFrom")
-
-  function onClick() {
-    if(account){
-      setDisabled(true)
-      transferDeed(account, Config.AUCTIONREPOSITORY_ADDRESS, deedId, { from: account })
-    }
-  }
-
-  useEffect(() => {
-    console.log("[CreateAucion] state: ", transferDeedState);
-    if (transferDeedState.status != 'Mining') {  
-      setDisabled(false)
-    }
-  }, [transferDeedState])
-
-  return (
-    <Button
-    onClick={onClick}
-    disabled={!account || disabled}
-    bg={bg800}
-    border="1px solid transparent"
-    _hover={{
-      border: "1px",
-      borderStyle: "solid",
-      borderColor: "whiteAlpha.700",
-      backgroundColor: { bg700 },
-    }}
-    borderRadius="xl"
-    m="1px"
-    px={3}
-    height="38px"
-  >
-    Create Auction
-  </Button>
-  )
-}
-
  /* eslint-disable @typescript-eslint/no-explicit-any */
-
 const Checkmark = ({ selected }: CheckmarkProps) => (
   <div
     style={
@@ -110,18 +56,19 @@ export const TokenCard = ({
   direction,
   top,
   left,
-  selected
+  selected,
+  onSelect
  }: any) => {
 
-  const [metadata, setMetadata] = useState<DeedProperties>(DeedProperties.Default)
+  const [metadata, setMetadata] = useState<ERC721MetadataExt>(ERC721MetadataExt.Default)
   
   useEffect(() => {
     async function fetchSource() {
       try {
         const response = await fetch(toHttpPath(photo.src));
         if (response.ok) {
-          const { properties: { name, description, image } } = await response.json();
-          setMetadata(new DeedProperties(name, description, toHttpPath(image)))
+          const { name, description, image } = await response.json();
+          setMetadata(new ERC721MetadataExt(name, description, toHttpPath(image)))
         } else {
           const errorMessage = await response.text()
           console.log("Error:", errorMessage)
@@ -147,6 +94,7 @@ export const TokenCard = ({
 
   const handleOnClick = () => {
     setIsSelected(!isSelected);
+    onSelect(!isSelected)
   };
 
   useEffect(() => {
@@ -195,7 +143,7 @@ export const TokenCard = ({
             #{photo.deedId} {metadata.name}
           </chakra.h3>
         </Box>
-      <style>{`.not-selected:hover{outline:2px solid #06befa}`}</style>
+      <style>{`.not-selected:hover{outline:2px solid rgba(255, 255, 255, 0.64)}`}</style>
     </div>
   )
 }

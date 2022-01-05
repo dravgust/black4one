@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
-import { DeedProperties } from "../../models/types"
+import { ERC721MetadataExt } from "../../models/types"
 import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
 import { useEthers } from "@usedapp/core"
 import Config from "../../config";
@@ -73,7 +73,7 @@ export const AuctionCard = ({ photo }: TokenCardProps) => {
   const bg700 = useColorModeValue('gray.200', 'gray.700')
   const bg800 = useColorModeValue('gray.300', 'gray.800')
 
-  const [metadata, setMetadata] = useState<DeedProperties>(DeedProperties.Default)
+  const [metadata, setMetadata] = useState<ERC721MetadataExt>(ERC721MetadataExt.Default)
   
   useEffect(() => {
     async function fetchSource() {
@@ -81,7 +81,7 @@ export const AuctionCard = ({ photo }: TokenCardProps) => {
         const response = await fetch(toHttpPath(photo.src));
         if (response.ok) {
           const { properties: { name, description, image } } = await response.json();
-          setMetadata(new DeedProperties(name, description, toHttpPath(image)))
+          setMetadata(new ERC721MetadataExt(name, description, toHttpPath(image)))
         } else {
           const errorMessage = await response.text()
           console.log("Error:", errorMessage)

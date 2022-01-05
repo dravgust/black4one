@@ -8,7 +8,7 @@ import {
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
 } from '@chakra-ui/react';
 import { ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils";
-import { DeedMetadata } from "../../models/types";
+import { ERC721MetadataExt } from "../../models/types";
 import { create } from 'ipfs-http-client'
 import * as yup from "yup";
 import { ModalProps } from "../../models/types";
@@ -81,7 +81,7 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
     const { cid: assetCid } = await nftClient.add({ path: ipfsPath, content })
 
     const assetURI = ensureIpfsUriPrefix(assetCid) + '/' + basename
-    const metadata = new DeedMetadata(options.name, options.description, assetURI)
+    const metadata = new ERC721MetadataExt(options.name, options.description, assetURI)
 
     const { cid: metadataCid } = await nftClient.add({
       path: '/nft/metadata.json',

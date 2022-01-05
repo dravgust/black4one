@@ -1,44 +1,20 @@
 
-export declare interface KeyValue<K, V> {
-    key: K;
-    value: V;
-}
-
-export interface Attributes {
+export interface IAttributes {
     [key: string]: string;
 }
 
-export interface ERC721Properties {
+export interface IERC721Metadata {
     name: string
     description: string
     image: string
 }
 
-export interface ERC721Metadata {
-    title: string
-    properties: ERC721Properties
-}
-
-export interface ERC721ExtProperties extends ERC721Properties {
+export interface IERC721MetadataExt extends IERC721Metadata {
     attributes: KeyValue<string, string>[]
     link: string
 }
 
-export interface ERC721ExtMetadata extends ERC721Metadata {
-    properties: ERC721ExtProperties
-}
-
-export declare interface KeyValue<K, V> {
-    key: K;
-    value: V;
-}
-
-export interface ModalProps {
-    isOpen: boolean
-    onClose(): void
-}
-
-export class DeedProperties implements ERC721ExtProperties {
+export class ERC721MetadataExt implements IERC721MetadataExt {
     public name: string
     public description: string  
     public image: string
@@ -59,18 +35,18 @@ export class DeedProperties implements ERC721ExtProperties {
         this.attributes = attributes;
     }
 
-    static Default = () => new DeedProperties(
+    static Default = () => new ERC721MetadataExt(
         "...",
         "...",
         ""
     )} 
 
+export interface ModalProps {
+    isOpen: boolean
+    onClose(): void
+}
 
-export class DeedMetadata implements ERC721ExtMetadata {
-    public title = "Asset Metadata";
-    public properties: DeedProperties;
-    
-    constructor(name: string, description: string, image: string, attributes = [], link = ""){
-        this.properties = new DeedProperties(name, description, image, attributes, link); 
-    }
+export declare interface KeyValue<K, V> {
+    key: K;
+    value: V;
 }

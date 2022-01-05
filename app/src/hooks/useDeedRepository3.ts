@@ -12,26 +12,17 @@ export const useDeedRepository = () => {
   //const [count, setCount] = useState();
   const contract = useRef<Contract>();
 
-  const getBalanceOf = async (account: string): Promise<BigNumber> => {
-    return await contract.current?.balanceOf(account);
-  }
-
-  const getTokenURI = async (tokenId: number | BigNumber) => {
-    return await contract.current?.tokenURI(tokenId);
-  }
-
-  const getTokenOfOwnerByIndex = async (account: string, index: number | BigNumber) => {
-    return await contract.current?.tokenOfOwnerByIndex(account, index);
-  }
+  const getBalanceOf = async (account: string): Promise<BigNumber> => await contract.current?.balanceOf(account);
+  const getTokenURI = async (tokenId: number | BigNumber) => await contract.current?.tokenURI(tokenId);
+  const getTokenOfOwnerByIndex = async (account: string, index: number | BigNumber) => await contract.current?.tokenOfOwnerByIndex(account, index);
 
   const getTokensOfOwner = async (account: string) => {
     try {
       const balance = await getBalanceOf(account);
       const tokenList = await Promise.all(range(balance.toNumber())
-        .map(async (i) => {
+        .map(async (i) => {   
           const tokenId = await getTokenOfOwnerByIndex(account, i)
           const metadataURI = await getTokenURI(tokenId)
-
           return {
             tokenId,
             metadataURI
