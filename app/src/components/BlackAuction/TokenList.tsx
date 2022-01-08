@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef, RefObject } from "react"
+import React, { useCallback, useState, useEffect,} from "react"
 import {
   VStack, Box, Text, Heading, useDisclosure,
   useColorModeValue, HStack, Button, ButtonGroup
@@ -9,18 +9,19 @@ import Gallery/*, { PhotoProps }*/ from "react-photo-gallery";
 import { useTokensOfOwner } from '../../hooks/useDeedRepository';
 import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
-import styled from "styled-components";
 import CreateDeedModal from "./CreateDeedModal";
 import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
 import Config from "../../config";
+import { useDeeds } from "./DeedProvider";
+import { ERC721MetadataExt } from "../../models/types";
 //import { TokenAuction } from "../../models/AuctionRepository"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type TransferDeedProps = {
-  selectedList: RefObject<number[]>,
+  selectedItem: number | undefined,
 };
 
-export const TransferDeed = ({ selectedList }: TransferDeedProps) => {
+export const TransferDeed = ({ selectedItem }: TransferDeedProps) => {
 
   const { account } = useEthers()
   const [disabled, setDisabled] = useState(false)
@@ -28,9 +29,8 @@ export const TransferDeed = ({ selectedList }: TransferDeedProps) => {
 
   function onClick() {
     if (account) {
-      const [deedId] = selectedList.current ?? []
-      if (deedId)
-        transferDeed(account, Config.AUCTIONREPOSITORY_ADDRESS, deedId, { from: account })
+      if (selectedItem)
+        transferDeed(account, Config.AUCTIONREPOSITORY_ADDRESS, selectedItem, { from: account })
       setDisabled(true)
     }
   }
@@ -42,9 +42,9 @@ export const TransferDeed = ({ selectedList }: TransferDeedProps) => {
   }, [transferDeedState])
 
   return (
-    <Button onClick={onClick} disabled={!account || disabled}
+    <Button onClick={onClick} disabled={!account || disabled || !selectedItem}
       bg={useColorModeValue('gray.200', 'gray.700')}
-      rounded={0}
+      rounded={"xl"}
       border="1px solid transparent"
       _hover={{
         borderColor: "whiteAlpha.700"
@@ -58,7 +58,7 @@ const TokenList = () => {
 
   const { account } = useEthers()
   const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
-  const selectedList = useRef<number[]>([])
+  const [selectedItem, setSelectedItem] = useState<number>()
 
   const tokens = useTokensOfOwner()
   const tokenList = tokens.map(token => ({
@@ -69,17 +69,14 @@ const TokenList = () => {
   })).reverse()
 
   const onItemSelect = (deedId: number) =>
-    (isSelected: boolean) => {
-      selectedList.current = isSelected
-        ? [...selectedList.current, deedId]
-        : selectedList.current.filter(e => e != deedId)
-    }
+    (isSelected: boolean) =>
+     setSelectedItem(isSelected ? deedId : undefined) 
 
   const imageRenderer = useCallback(
     ({ index, key, photo, left, top }) => (
       <TokenCard
         onSelect={onItemSelect(photo.deedId)}
-        selected={false}
+        selected={selectedItem == photo.deedId}
         index={index}
         key={`${key}_${index}`}
         photo={photo}
@@ -88,8 +85,11 @@ const TokenList = () => {
         top={top}
       />
     ),
-    []
+    [selectedItem]
   );
+
+  const { deeds, createDeed } = useDeeds()
+  console.log("deeds", deeds)
 
   return (
     <VStack py={5}>
@@ -108,11 +108,11 @@ const TokenList = () => {
         </Box>
         <Box textAlign={"right"} w="full">
           <ButtonGroup variant='outline' spacing='1'>
-            <TransferDeed selectedList={selectedList} />
-
+            <TransferDeed selectedItem={selectedItem} />
+            <Button onClick={() => createDeed(new ERC721MetadataExt("test", "test", "http://test"))}>Click</Button>
             <Button onClick={onCreateDeedOpen} disabled={!account}
               bg={useColorModeValue('gray.200', 'gray.700')}
-              rounded={0}
+              rounded={"xl"}
               border="1px solid transparent"
               _hover={{
                 borderColor: "whiteAlpha.700"
@@ -127,18 +127,10 @@ const TokenList = () => {
       <Box w={"full"}>
         {account && tokenList.length !== 0
           ? <Gallery photos={tokenList} renderImage={imageRenderer} />
-          : <EmptyDescription>There are no tokens in your cart</EmptyDescription>}
+          : <Box height={20}></Box>}
       </Box>
     </VStack>
   )
 }
 
 export default TokenList;
-
-const EmptyDescription = styled.h3`
-    color: #2D3748;
-    border-bottom: 4px solid #2D3748;
-    width: max-content;
-    margin: 0 auto;
-    font-size: calc(10px + 2vmin)
-`

@@ -1,6 +1,6 @@
 import React, { useCallback,} from "react"
 import {
-  VStack, Box, Text, Heading, useColorModeValue,
+  VStack, Box, Text, Heading, useColorModeValue, HStack
 } from "@chakra-ui/react"
 //import { AddIcon } from "@chakra-ui/icons"
 import { AuctionCard } from "./AuctionCard";
@@ -43,18 +43,23 @@ const AuctionList = () => {
       //bg={useColorModeValue("white", "gray.700")}
       py={5}
     >
-      <Box display={"flex"} flexDir={"column"} my={"1.5rem"}>
-        <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
-          Auctions
-        </Heading>
-        <Text
-          mt={1}
-          fontSize="sm"
-          color={useColorModeValue("gray.600", "gray.400")}
-        >
+      <HStack w={"full"} px={1}>
+        <Box display={"flex"} flexDir={"column"} my={"1.5rem"}>
+          <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
+            Auctions
+          </Heading>
+          <Text
+            mt={1}
+            fontSize="sm"
+            color={useColorModeValue("gray.600", "gray.400")}
+          >
 
-        </Text>
-      </Box>
+          </Text>
+        </Box>
+        <Box textAlign={"right"} w="full">
+
+        </Box>
+      </HStack>
       <Box w={"full"}>
         {account && auctionList.length !== 0
           ? <Gallery photos={auctionList} margin={5} direction="column" renderImage={imageRenderer} />

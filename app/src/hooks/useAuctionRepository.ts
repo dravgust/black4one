@@ -5,7 +5,7 @@ import { utils } from 'ethers'
 import Config from '../config';
 import { useContractEvents } from './useContract'
 import { useContractCall, useContractCalls, useEthers } from '@usedapp/core'
-import { Auction, TokenAuction } from '../models/AuctionRepository'
+import { Auction, TokenAuction } from '../models/auction'
 
 const contractAddress = Config.AUCTIONREPOSITORY_ADDRESS;
 const contractAbi = Config.AUCTIONREPOSITORY_ABI;
@@ -48,7 +48,7 @@ export function useAuctionsById(auctionIds: number[] | undefined) {
     return auctions;
 }
 
- /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function useAuctionList(address: string | null | undefined, activeOnly: boolean = false) {
 
     const [auctionList, setAuctionList] = useState<TokenAuction[]>([])
@@ -68,7 +68,7 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
                     if (list.length > 0) {
                         const connectedContract = tokenContract.connect(provider)
                         const auctionList = await Promise.all(list.map(async (a: Auction) => {
-                        const metadataURI = await  connectedContract.tokenURI(a.deedId)     
+                            const metadataURI = await connectedContract.tokenURI(a.deedId)
                             return {
                                 ...a,
                                 tokenId: a.deedId.toNumber(),

@@ -12,24 +12,30 @@ import { Transactions } from './pages/Transactions';
 import BlackFaucet from './pages/BlackFaucet';
 import Auction from './pages/Auction';
 import FileStorage from './pages/FileStorage';
-
+import { DAppProvider } from '@usedapp/core'
+import Config from './config'
+import DeedProvider from './components/BlackAuction/DeedProvider';
 
 const App = () => (
     <ChakraProvider theme={theme}>
-        <BrowserRouter>
-            <Routes>
-                <Route path='*' element={<NotFound />} />
-                <Route path='/' element={<Balance />} />
-                <Route path='/prices' element={<Prices />} />
-                <Route path='/block' element={<Block />} />
-                <Route path='/tokens' element={<Tokens />} />
-                <Route path='/faucet' element={<BlackFaucet />} />
-                <Route path='/send' element={<SendEtherPage />} />
-                <Route path='/transactions' element={<Transactions />} />
-                <Route path='/auction' element={<Auction />} />
-                <Route path='/storage' element={<FileStorage />} />
-            </Routes>
-        </BrowserRouter>
+        <DAppProvider config={Config.DAPP_CONFIG}>
+            <DeedProvider>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path='*' element={<NotFound />} />
+                        <Route path='/' element={<Balance />} />
+                        <Route path='/prices' element={<Prices />} />
+                        <Route path='/block' element={<Block />} />
+                        <Route path='/tokens' element={<Tokens />} />
+                        <Route path='/faucet' element={<BlackFaucet />} />
+                        <Route path='/send' element={<SendEtherPage />} />
+                        <Route path='/transactions' element={<Transactions />} />
+                        <Route path='/auction' element={<Auction />} />
+                        <Route path='/storage' element={<FileStorage />} />
+                    </Routes>
+                </BrowserRouter>
+            </DeedProvider>
+        </DAppProvider>
     </ChakraProvider>
 );
 

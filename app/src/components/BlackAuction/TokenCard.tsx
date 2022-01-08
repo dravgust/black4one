@@ -57,7 +57,7 @@ export const TokenCard = ({
   top,
   left,
   selected,
-  onSelect
+  onSelect = (f: any) => f 
  }: any) => {
 
   const [metadata, setMetadata] = useState<ERC721MetadataExt>(ERC721MetadataExt.Default)

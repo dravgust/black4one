@@ -160,7 +160,7 @@ const DefaultLayout = ({ children }: Props) => {
                 <Container mb={16} maxW='container.lg'>
                     <Box px={5} mt={[5, null, 0]}>
                         <Box display={"flex"} flexDir={"column"} my={"1.5rem"}>
-                            <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md" lineHeight="6">
+                            <Heading fontSize={"calc(1px + 2vmin)"} fontWeight="md" lineHeight="6">
                                 {pathname}
                             </Heading>
                         </Box>
