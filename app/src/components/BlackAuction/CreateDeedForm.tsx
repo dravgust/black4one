@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef,} from "react"
 import { useEthers } from '@usedapp/core'
 import { useBlackDeedMethod } from "../../hooks/useDeedRepository"
 import { Form, Field, FieldProps, FormikHelpers } from "formik"
@@ -7,11 +7,9 @@ import {
   chakra, FormLabel, FormErrorMessage, FormControl, Input, Button, useColorModeValue, Stack, SimpleGrid, GridItem,
   Textarea, FormHelperText, Flex, Icon, VisuallyHidden, Text, Box
 } from '@chakra-ui/react';
-import { ensureIpfsUriPrefix, stripIpfsUriPrefix, toHttpPath } from "../../utils";
-import { ERC721MetadataExt } from "../../models/types";
-import { create } from 'ipfs-http-client'
 import * as yup from "yup";
 import { ModalProps } from "../../models/types";
+import { useERC721Context } from "./ERC721Provider";
 
 interface FormValues {
   tokenName: string
@@ -19,18 +17,7 @@ interface FormValues {
   tokenFile: string
 }
 
-interface TokenOptions {
-  path?: string,
-  name: string,
-  description: string,
-  owner?: string | null | undefined
-}
-
-const nftClient = create({
-  url: 'https://ipfs.infura.io:5001/api/v0'
-})
-
-
+ /* eslint-disable @typescript-eslint/no-explicit-any */
 export const CreateDeedForm = ({onClose}: ModalProps) => {
 
   const gray700gray50 = useColorModeValue("gray.700", "gray.50")
@@ -47,84 +34,33 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
   const [disabled, setDisabled] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const formikRef = useRef<FormikHelpers<FormValues>>()
+  const foucusedRef = useRef<any>()
 
+  const { tokens, createToken, createTokenData} = useERC721Context()
+  console.log("[DeedRepositoryForm] tokenList", tokens)
   const { state: registerDeedState, send : registerDeed } = useBlackDeedMethod('registerDeed');
-
-  /*const mintToken = async (ownerAddress: string, metadataURI: string) => {
-    metadataURI = stripIpfsUriPrefix(metadataURI)
-    const tx = await contract.registerDeed(metadataURI, { from: ownerAddress })
-    const receit = await tx.wait()
-    for(const event of receit.events) {
-      if(event.event !== 'DeedRegistered') {
-        console.log('ignoring unknown event type ', event.event)
-        continue
-      }
-      return event.args.tokenId.toString()
-    }
-
-    throw new Error('unable to get token id')
-  }
-
-  const defaultOwnerAddress = () : string => {
-
-    if(!account){
-      throw new Error("account is not provided")
-    }
-    return account
-  }*/
-
-  const createNFTFromAssetData = async (content: File, options: TokenOptions) => {
-    const filePath = options.path || 'asset.bin'
-    const basename = encodeURIComponent(filePath.replace(/^.*(\\|\/|\:)/, ''))
-
-    const ipfsPath = '/nft/' + filePath
-    const { cid: assetCid } = await nftClient.add({ path: ipfsPath, content })
-
-    const assetURI = ensureIpfsUriPrefix(assetCid) + '/' + basename
-    const metadata = new ERC721MetadataExt(options.name, options.description, assetURI)
-
-    const { cid: metadataCid } = await nftClient.add({
-      path: '/nft/metadata.json',
-      content: JSON.stringify(metadata)
-    })
-    const metadataURI = ensureIpfsUriPrefix(metadataCid) + '/metadata.json'
-
-    //let ownerAddress = options.owner
-    //if(!ownerAddress){
-    // ownerAddress = defaultOwnerAddress()
-    //}
-
-    //const tokenId = await mintToken(ownerAddress, metadataURI)
-
-    return {
-      //tokenId,
-      metadata,
-      assetURI,
-      metadataURI,
-      ssetGatewayURL: toHttpPath(assetURI),
-      metadataGatewayURL: toHttpPath(metadataURI),
-    }
-  }
 
   const onSubmit = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
     console.log("[DeedRepositoryForm] values: ", values)
     console.log("[DeedRepositoryForm] file: ", file)
     console.log("[DeedRepositoryForm] account: ", account)
     if (file != null && account != null) {
-      const { assetURI, metadataURI, ssetGatewayURL, metadataGatewayURL } = await createNFTFromAssetData(file, {
+      const { metadata, assetURI, metadataURI, assetGatewayURL, metadataGatewayURL } = await createTokenData(file, {
         path: file.name,
         name: values.tokenName,
         description: values.tokenDescription,
         owner: account
       })
 
-      console.log("assetURI", assetURI)
-      console.log("metadataURI", metadataURI)
-      console.log("ssetGatewayURL", ssetGatewayURL)
-      console.log("metadataGatewayURL", metadataGatewayURL)
+      console.log("[DeedRepositoryForm] assetURI", assetURI)
+      console.log("[DeedRepositoryForm] metadataURI", metadataURI)
+      console.log("[DeedRepositoryForm] ssetGatewayURL", assetGatewayURL)
+      console.log("[DeedRepositoryForm] metadataGatewayURL", metadataGatewayURL)
+
+      createToken(metadata)
 
       //send(stripIpfsUriPrefix(metadataURI), { from: account })
-      registerDeed(stripIpfsUriPrefix(metadataURI), { from: account })
+      registerDeed(metadataURI, { from: account })
 
       setDisabled(true)
     }
@@ -146,6 +82,10 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
       }
     }
   }
+
+  useEffect(() => {
+    foucusedRef.current.focus()
+  }, [])
 
   useEffect(() => {
     console.log("[DeedRepositoryForm] state: ", registerDeedState);
@@ -212,6 +152,7 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
                       placeholder="Identifies the asset to which this NFT represents"
                       focusBorderColor="brand.400"
                       rounded="xl"
+                      ref={foucusedRef}
                       {...field}
                     />
                     <FormErrorMessage mt={2} textAlign={'center'}>{form.errors.tokenName}</FormErrorMessage>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, } from "react"
 import { chakra, useColorModeValue, Box} from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { ERC721MetadataExt } from "../../models/types"
@@ -64,6 +64,7 @@ export const TokenCard = ({
   
   useEffect(() => {
     async function fetchSource() {
+      console.log("CARD fetch", photo.deedId)
       try {
         const response = await fetch(toHttpPath(photo.src));
         if (response.ok) {

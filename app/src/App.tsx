@@ -14,12 +14,12 @@ import Auction from './pages/Auction';
 import FileStorage from './pages/FileStorage';
 import { DAppProvider } from '@usedapp/core'
 import Config from './config'
-import DeedProvider from './components/BlackAuction/DeedProvider';
+import ERC721Provider from './components/BlackAuction/ERC721Provider';
 
 const App = () => (
     <ChakraProvider theme={theme}>
         <DAppProvider config={Config.DAPP_CONFIG}>
-            <DeedProvider>
+            <ERC721Provider>
                 <BrowserRouter>
                     <Routes>
                         <Route path='*' element={<NotFound />} />
@@ -34,7 +34,7 @@ const App = () => (
                         <Route path='/storage' element={<FileStorage />} />
                     </Routes>
                 </BrowserRouter>
-            </DeedProvider>
+            </ERC721Provider>
         </DAppProvider>
     </ChakraProvider>
 );

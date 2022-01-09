@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect,} from "react"
+import React, { useCallback, useState, useEffect, memo,} from "react"
 import {
   VStack, Box, Text, Heading, useDisclosure,
   useColorModeValue, HStack, Button, ButtonGroup
@@ -12,9 +12,6 @@ import { toHttpPath, } from "../../utils";
 import CreateDeedModal from "./CreateDeedModal";
 import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
 import Config from "../../config";
-import { useDeeds } from "./DeedProvider";
-import { ERC721MetadataExt } from "../../models/types";
-//import { TokenAuction } from "../../models/AuctionRepository"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type TransferDeedProps = {
@@ -34,6 +31,7 @@ export const TransferDeed = ({ selectedItem }: TransferDeedProps) => {
       setDisabled(true)
     }
   }
+
   useEffect(() => {
     console.log("[TransferDeed] state: ", transferDeedState);
     if (transferDeedState.status != 'Mining') {
@@ -53,6 +51,11 @@ export const TransferDeed = ({ selectedItem }: TransferDeedProps) => {
     </Button>
   )
 }
+
+const PureTokenCard = memo(TokenCard, 
+  (prevProps, nextProps) => 
+  prevProps.photo.deedId === nextProps.photo.deedId 
+  && prevProps.selected === nextProps.selected)
 
 const TokenList = () => {
 
@@ -74,7 +77,7 @@ const TokenList = () => {
 
   const imageRenderer = useCallback(
     ({ index, key, photo, left, top }) => (
-      <TokenCard
+      <PureTokenCard
         onSelect={onItemSelect(photo.deedId)}
         selected={selectedItem == photo.deedId}
         index={index}
@@ -87,9 +90,6 @@ const TokenList = () => {
     ),
     [selectedItem]
   );
-
-  const { deeds, createDeed } = useDeeds()
-  console.log("deeds", deeds)
 
   return (
     <VStack py={5}>
@@ -109,7 +109,6 @@ const TokenList = () => {
         <Box textAlign={"right"} w="full">
           <ButtonGroup variant='outline' spacing='1'>
             <TransferDeed selectedItem={selectedItem} />
-            <Button onClick={() => createDeed(new ERC721MetadataExt("test", "test", "http://test"))}>Click</Button>
             <Button onClick={onCreateDeedOpen} disabled={!account}
               bg={useColorModeValue('gray.200', 'gray.700')}
               rounded={"xl"}
