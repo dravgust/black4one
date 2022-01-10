@@ -70,6 +70,8 @@ type TokenCardImage = {
 
 export const AuctionCard = ({ photo }: TokenCardProps) => {
 
+  console.log("photo", photo)
+
   const bg700 = useColorModeValue('gray.200', 'gray.700')
   const bg800 = useColorModeValue('gray.300', 'gray.800')
 
@@ -80,7 +82,8 @@ export const AuctionCard = ({ photo }: TokenCardProps) => {
       try {
         const response = await fetch(toHttpPath(photo.src));
         if (response.ok) {
-          const { properties: { name, description, image } } = await response.json();
+          const { name, description, image } = await response.json();
+          console.log("response", photo)
           setMetadata(new ERC721MetadataExt(name, description, toHttpPath(image)))
         } else {
           const errorMessage = await response.text()

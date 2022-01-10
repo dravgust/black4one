@@ -40,13 +40,13 @@ const PersoneList = () => {
     );
 
     return (
-        <>
+        <div style={{paddingTop: "20px"}}>
             {!loading && <h4>Loading....</h4>}
             {loading &&
-                <FixedSizeList height={500} width={500} itemCount={bigList.length} itemSize={50}>
+                <FixedSizeList height={500} width={"auto"} itemCount={bigList.length} itemSize={50}>
                     {renderRow}
                 </FixedSizeList>
             }
-        </>
+        </div>
     )
 }

@@ -4,13 +4,12 @@ import {
 } from "@chakra-ui/react"
 //import { AddIcon } from "@chakra-ui/icons"
 import { AuctionCard } from "./AuctionCard";
-import Gallery/*, { PhotoProps }*/ from "react-photo-gallery";
 import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
 import styled from "styled-components";
 import { useAuctionList } from '../../hooks/useAuctionRepository'
 
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const AuctionList = () => {
 
   const { account } = useEthers()
@@ -18,9 +17,7 @@ const AuctionList = () => {
 
   const auctionList = auctions.map(a => ({
     deedId: a.tokenId,
-     src: toHttpPath(a.metadataURI),
-      width: 1,
-      height: 1
+    src: toHttpPath(a.metadataURI),
     })).reverse()
 
 
@@ -62,7 +59,9 @@ const AuctionList = () => {
       </HStack>
       <Box w={"full"}>
         {account && auctionList.length !== 0
-          ? <Gallery photos={auctionList} margin={5} direction="column" renderImage={imageRenderer} />
+          ? auctionList.map((item:any, i: number) => (
+            <div key={i}>{imageRenderer({index:i, key:item.deedId, photo:item})}</div>
+            ))
           : <EmptyDescription>There are no auctions</EmptyDescription>}
       </Box>
     </VStack>
