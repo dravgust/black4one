@@ -10,6 +10,7 @@ import {
 import * as yup from "yup";
 import { ModalProps } from "../../models/types";
 import { useERC721Context } from "./ERC721Provider";
+import { createTokenData } from "../../hooks/useIpfsStorage"
 
 interface FormValues {
   tokenName: string
@@ -36,7 +37,7 @@ export const CreateDeedForm = ({onClose}: ModalProps) => {
   const formikRef = useRef<FormikHelpers<FormValues>>()
   const foucusedRef = useRef<any>()
 
-  const { tokens, createToken, createTokenData} = useERC721Context()
+  const { tokens, createToken} = useERC721Context()
   console.log("[DeedRepositoryForm] tokenList", tokens)
   const { state: registerDeedState, send : registerDeed } = useBlackDeedMethod('registerDeed');
 

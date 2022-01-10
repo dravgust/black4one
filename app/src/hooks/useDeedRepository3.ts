@@ -60,3 +60,28 @@ export const useDeedRepository = () => {
     getTokensOfOwner
   }
 }
+
+    /*const mintToken = async (ownerAddress: string, metadataURI: string) => {
+    metadataURI = stripIpfsUriPrefix(metadataURI)
+    const tx = await contract.registerDeed(metadataURI, { from: ownerAddress })
+    const receit = await tx.wait()
+    for(const event of receit.events) {
+      if(event.event !== 'DeedRegistered') {
+        console.log('ignoring unknown event type ', event.event)
+        continue
+      }
+      return event.args.tokenId.toString()
+    }
+
+        throw new Error('unable to get token id')
+    }
+
+    const defaultOwnerAddress = () : string => {
+
+        if(!account){
+        throw new Error("account is not provided")
+        }
+        return account
+    }*/
+
+    
