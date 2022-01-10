@@ -2,8 +2,9 @@ import React from "react";
 import DefaultLayout from "../components/layouts/DefaultLayout";
 import FileStorageForm from "../components/BlackAuction/FileStorageForm";
 import StarRating from "../components/Rating/StarRating";
-
 import { useFaker } from "react-fakers"
+import { FixedSizeList,  } from "react-window"
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const FileStorage = () => {
     return (
@@ -18,18 +19,22 @@ export default FileStorage;
 
 const PersoneList = () => {
 
-    const { success, error, loading } = useFaker({ type: 'persons', params: { persons: { quantity: 500 } } as any })
+    const { success: bigList, error, loading } = useFaker({ type: 'persons', params: { persons: { quantity: 2000 } } as any })
 
     if (error) {
         alert((error as any).message)
     }
 
 
-    const renderItem = (item: any) => (
-        <div style={{ display: "flex" }}>
-            <img src={item.image} alt={item.firstname} width={50} />
+    const renderRow = ({index, style}: any) => (
+        <div style={{ ...style, ...{ display: "flex" } }}>
+            <img
+                src={bigList[index].image}
+                alt={bigList[index].firstName}
+                width={50}
+            />
             <p>
-                {item.firstname} {item.lastname} - {item.email}
+                {bigList[index].firstname} {bigList[index].lastname} — {bigList[index].email}
             </p>
         </div>
     );
@@ -37,22 +42,11 @@ const PersoneList = () => {
     return (
         <>
             {!loading && <h4>Loading....</h4>}
-            {loading && <List loading={loading} data={success} renderItem={renderItem} renderEmpty={<p>This list is empty</p>} />}
-        </>
-    )
-}
-
-const List = ({ data = [], renderItem, renderEmpty }: any) => {
-
-    return !data.length ? (
-        renderEmpty
-    ) : (
-        <>
-            <ul>
-                {data.map((item: any, i: number) => (
-                    <li key={i}>{renderItem(item)}</li>
-                ))}
-            </ul>
+            {loading &&
+                <FixedSizeList height={500} width={500} itemCount={bigList.length} itemSize={50}>
+                    {renderRow}
+                </FixedSizeList>
+            }
         </>
     )
 }
