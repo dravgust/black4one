@@ -23,9 +23,10 @@ const AuctionList = () => {
 
 
   const imageRenderer = useCallback(
-    ({ data }) => {
+    ({ deedId, data }) => {
       return (
         <AuctionCard
+          deedId={deedId}
           metadata={data}
         />
       )
@@ -62,10 +63,10 @@ const AuctionList = () => {
             <Fetch
               uri={item.src}
               key={i}
-              renderSuccess={imageRenderer}
+              renderSuccess={(data: any) => imageRenderer({...data, deedId: item.deedId})}
             />
           ))
-          : <EmptyDescription>There are no auctions</EmptyDescription>}
+          : <EmptyDescription>...</EmptyDescription>}
       </Box>
     </VStack>
   )

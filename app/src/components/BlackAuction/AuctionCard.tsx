@@ -1,63 +1,10 @@
-import React, { useState, useEffect } from "react"
-import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
-import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
-import { useEthers } from "@usedapp/core"
-import Config from "../../config";
+import React from "react"
+import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
-//import { TokenAuction } from "../../models/AuctionRepository"
-
-type CreateAucionProps = {
-  deedId: number,
-};
-
-export const CreateAucion = ({deedId}: CreateAucionProps) => {
-
-  const bg700 = useColorModeValue('gray.200', 'gray.700')
-  const bg800 = useColorModeValue('gray.300', 'gray.800')
-
-  const { account } = useEthers()
-  const [disabled, setDisabled] = useState(false)
-  const { state: transferDeedState, send: transferDeed } = useBlackDeedMethod("transferFrom")
-
-  function onClick() {
-    if(account){
-      setDisabled(true)
-      transferDeed(account, Config.AUCTIONREPOSITORY_ADDRESS, deedId, { from: account })
-    }
-  }
-
-  useEffect(() => {
-    console.log("[CreateAucion] state: ", transferDeedState);
-    if (transferDeedState.status != 'Mining') {  
-      setDisabled(false)
-    }
-  }, [transferDeedState])
-
-  return (
-    <Button
-    onClick={onClick}
-    disabled={!account || disabled}
-    bg={bg800}
-    border="1px solid transparent"
-    _hover={{
-      border: "1px",
-      borderStyle: "solid",
-      borderColor: "whiteAlpha.700",
-      backgroundColor: { bg700 },
-    }}
-    borderRadius="xl"
-    m="1px"
-    px={3}
-    height="38px"
-  >
-    Create Auction
-  </Button>
-  )
-}
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const AuctionCard = ({  metadata, deedId = 0 }: any) => {
-  console.log(metadata)
+export const AuctionCard = ({  deedId, metadata }: any) => {
+  console.log("metadata", metadata)
   const bg700 = useColorModeValue('gray.200', 'gray.700')
   const bg800 = useColorModeValue('gray.300', 'gray.800')  
   return (
@@ -142,11 +89,16 @@ export const AuctionCard = ({  metadata, deedId = 0 }: any) => {
             DeedID: {deedId}
           </chakra.span>
 
+
+            <Box p="4" background="gray.700" borderRadius="xl" width="300px" textAlign="center">
+                <Text color="white" fontSize="8xl">
+                    {0}
+                </Text>
+            </Box>
+
           <ButtonGroup variant='outline' spacing='1' pt={2} borderTop="1px" borderColor={bg800}>
 
-           <CreateAucion deedId={deedId}/>
-
-            <chakra.button
+            <Button
               bg={bg800}
               border="1px solid transparent"
               _hover={{
@@ -161,7 +113,7 @@ export const AuctionCard = ({  metadata, deedId = 0 }: any) => {
               height="38px"
             >
               Cancel Aucion
-            </chakra.button>
+            </Button>
 
           </ButtonGroup>
         </Flex>
