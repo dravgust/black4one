@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup } from "@chakra-ui/react"
-import { toHttpPath } from "../../utils";
-import { ERC721MetadataExt } from "../../models/types"
 import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
 import { useEthers } from "@usedapp/core"
 import Config from "../../config";
+import { toHttpPath } from "../../utils";
 //import { TokenAuction } from "../../models/AuctionRepository"
 
 type CreateAucionProps = {
@@ -56,47 +55,11 @@ export const CreateAucion = ({deedId}: CreateAucionProps) => {
   )
 }
 
-type TokenCardProps = {
-  index: number,
-  photo: TokenCardImage,
-};
-
-type TokenCardImage = {
-  width: number,
-  height: number,
-  src: string,
-  deedId: number
-}
-
-export const AuctionCard = ({ photo }: TokenCardProps) => {
-
-  console.log("photo", photo)
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const AuctionCard = ({  metadata, deedId = 0 }: any) => {
+  console.log(metadata)
   const bg700 = useColorModeValue('gray.200', 'gray.700')
-  const bg800 = useColorModeValue('gray.300', 'gray.800')
-
-  const [metadata, setMetadata] = useState<ERC721MetadataExt>(ERC721MetadataExt.Default)
-  
-  useEffect(() => {
-    async function fetchSource() {
-      try {
-        const response = await fetch(toHttpPath(photo.src));
-        if (response.ok) {
-          const { name, description, image } = await response.json();
-          console.log("response", photo)
-          setMetadata(new ERC721MetadataExt(name, description, toHttpPath(image)))
-        } else {
-          const errorMessage = await response.text()
-          console.log("Error:", errorMessage)
-        }
-      } catch (error) {
-        console.log("Error:", error)
-      }
-    }
-    fetchSource()
-  }, [])
-
-
+  const bg800 = useColorModeValue('gray.300', 'gray.800')  
   return (
     <Flex mb={1}>
       <Flex
@@ -119,7 +82,7 @@ export const AuctionCard = ({ photo }: TokenCardProps) => {
           bgPos="center"
           style={{
             backgroundImage:
-              `url(${metadata.image})`,
+              `url(${toHttpPath(metadata.image)})`,
           }}
         ></Box>
 
@@ -176,12 +139,12 @@ export const AuctionCard = ({ photo }: TokenCardProps) => {
           <chakra.span
             color={useColorModeValue("gray.800", "gray.200")}
           >
-            DeedID: {photo.deedId}
+            DeedID: {deedId}
           </chakra.span>
 
           <ButtonGroup variant='outline' spacing='1' pt={2} borderTop="1px" borderColor={bg800}>
 
-           <CreateAucion deedId={photo.deedId}/>
+           <CreateAucion deedId={deedId}/>
 
             <chakra.button
               bg={bg800}

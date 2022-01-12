@@ -4,36 +4,13 @@ import FileStorageForm from "../components/BlackAuction/FileStorageForm";
 import StarRating from "../components/Rating/StarRating";
 import { useFaker } from "react-fakers"
 import { FixedSizeList, } from "react-window"
-import RepoMenu from "../components/RepoMenu";
-import { useEthers } from "@usedapp/core";
-import { useAuctionList } from "../hooks/useAuctionRepository";
-import { toHttpPath } from "../utils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const FileStorage = () => {
-
-    const { account } = useEthers()
-    const auctions = useAuctionList(account, true)
-
-    const auctionList = auctions.map(a => ({
-        deedId: a.tokenId,
-        name: toHttpPath(a.metadataURI),
-    })).reverse()
-
-    console.log(auctionList)
     return (
         <DefaultLayout>
             <FileStorageForm />
             <StarRating totalStars={5} />
-
-            {auctionList.length > 0 &&
-                <RepoMenu
-                    repositories={auctionList}
-                    onSelect={
-                        (repoName: string) =>
-                            console.log(`${repoName} selected`)
-                    } />}
-
             <PersoneList />
         </DefaultLayout>
     );

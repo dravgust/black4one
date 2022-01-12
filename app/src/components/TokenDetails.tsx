@@ -5,10 +5,10 @@ import TokenRepositories from "./TokenRepositories";
 export default function TokenDetails({ data }: any) {
     return (
         <div>
-            {/*<img src={data.image} alt={data.name} style={{ width: 200 }} />*/}
+            <img src={data.image} alt={data.name} style={{ height: 64 }} />
             <div>
-                <h1>{data.src}</h1>
-                <p>{data.src}</p>
+                <h1>{data.name}</h1>
+                <p>{data.description}</p>
             </div>
             <TokenRepositories
                 tokenURI={data.src}

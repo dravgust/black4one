@@ -1,4 +1,4 @@
-import React, { useCallback,} from "react"
+import React, { useCallback, } from "react"
 import {
   VStack, Box, Text, Heading, useColorModeValue, HStack
 } from "@chakra-ui/react"
@@ -8,6 +8,7 @@ import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
 import styled from "styled-components";
 import { useAuctionList } from '../../hooks/useAuctionRepository'
+import Fetch from "../Fetch";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const AuctionList = () => {
@@ -18,16 +19,14 @@ const AuctionList = () => {
   const auctionList = auctions.map(a => ({
     deedId: a.tokenId,
     src: toHttpPath(a.metadataURI),
-    })).reverse()
+  })).reverse()
 
 
   const imageRenderer = useCallback(
-    ({ index, key, photo }) => {
+    ({ data }) => {
       return (
         <AuctionCard
-          index={index}
-          key={key}
-          photo={photo}
+          metadata={data}
         />
       )
     },
@@ -59,9 +58,13 @@ const AuctionList = () => {
       </HStack>
       <Box w={"full"}>
         {account && auctionList.length !== 0
-          ? auctionList.map((item:any, i: number) => (
-            <div key={i}>{imageRenderer({index:i, key:item.deedId, photo:item})}</div>
-            ))
+          ? auctionList.map((item: any, i: number) => (
+            <Fetch
+              uri={item.src}
+              key={i}
+              renderSuccess={imageRenderer}
+            />
+          ))
           : <EmptyDescription>There are no auctions</EmptyDescription>}
       </Box>
     </VStack>
