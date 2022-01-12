@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const useIterator = (
-    items = [],
+    items: any[] = [],
     initialIndex = 0
 ) => {
     const [i, setIndex] = useState(initialIndex);
@@ -18,5 +19,5 @@ export const useIterator = (
 
     const item = useMemo(() => items[i], [i]);
 
-    return [item, prev, next];
+    return [item || items[0], prev, next];
 }

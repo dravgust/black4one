@@ -2,7 +2,7 @@ import React from 'react';
 import { useFetch } from '../hooks/useFetch';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function Fetch({
+export default function Fetch({
     uri,
     renderSuccess,
     loadingFallback = (<p>loading...</p>),
