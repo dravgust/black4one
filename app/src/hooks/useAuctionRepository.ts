@@ -4,8 +4,10 @@ import { Contract } from '@ethersproject/contracts'
 import { utils } from 'ethers'
 import Config from '../config';
 import { useContractEvents } from './useContract'
-import { useContractCall, useContractCalls, useEthers } from '@usedapp/core'
+import { useContractCall, useContractCalls, useEthers, } from '@usedapp/core'
+//import { BigNumber } from '@ethersproject/bignumber'
 import { Auction, TokenAuction } from '../models/auction'
+import { useContractMethod } from '.';
 
 const contractAddress = Config.AUCTIONREPOSITORY_ADDRESS;
 const contractAbi = Config.AUCTIONREPOSITORY_ABI;
@@ -46,6 +48,17 @@ export function useAuctionsById(auctionIds: number[] | undefined) {
             )) : []
         )
     return auctions;
+}
+
+export function useCurrentBid(auctionId: number){
+    const [currentBid] = useContractCall(
+        {
+            abi: contractInterface,
+            address: contractAddress,
+            method: 'getCurrentBid',
+            args: [auctionId],
+        }) ?? []
+    return currentBid;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -90,4 +103,10 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
     }, [provider, address, auctions])
 
     return auctionList;
+}
+
+export function useCancelAuction() {
+
+    const {state, send} = useContractMethod(contract, 'cancelAuction')
+    return { state, send }
 }

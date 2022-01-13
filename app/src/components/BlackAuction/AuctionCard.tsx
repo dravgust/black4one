@@ -1,14 +1,36 @@
-import React from "react"
-import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text } from "@chakra-ui/react"
+import React, { useEffect, useState } from "react"
+import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text, VStack, Heading } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
+import { useCancelAuction, useCurrentBid } from "../../hooks/useAuctionRepository";
+import { formatEther } from '@ethersproject/units';
+import { useEthers } from "@usedapp/core";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const AuctionCard = ({  deedId, metadata }: any) => {
-  console.log("metadata", metadata)
+export const AuctionCard = ({ auctionName, auctionDescription, deedId, metadata }: any) => {
+
   const bg700 = useColorModeValue('gray.200', 'gray.700')
-  const bg800 = useColorModeValue('gray.300', 'gray.800')  
+
+  const [disabled, setDisabled] = useState(false)
+  const { account } = useEthers()
+  const currendBid = useCurrentBid(deedId);
+  const { state: cancelState, send: cancelAcution } = useCancelAuction()
+
+  const onCancelClick = () => {
+    if (account) {
+      cancelAcution(deedId, { from: account })
+      setDisabled(true)
+    }
+  }
+
+  useEffect(() => {
+    console.log("[AuctionCard] cancelState: ", cancelState);
+    if (cancelState.status != 'Mining') {
+      setDisabled(false)
+    }
+  }, [cancelState])
+
   return (
-    <Flex mb={1}>
+    <Flex mb={5}>
       <Flex
         direction="column"
         //justifyContent="center"
@@ -23,7 +45,7 @@ export const AuctionCard = ({  deedId, metadata }: any) => {
           //w={64}
           h={64}
           w="full"
-          roundedLeft={"xl"}
+          //roundedLeft={"xl"}
           shadow="md"
           bgSize="cover"
           bgPos="center"
@@ -40,7 +62,7 @@ export const AuctionCard = ({  deedId, metadata }: any) => {
           mt={-10}
           shadow="lg"
           //rounded="lg"
-          roundedBottomLeft={"xl"}
+          //roundedBottomLeft={"xl"}
           overflow="hidden"
         >
           <chakra.h3
@@ -53,18 +75,26 @@ export const AuctionCard = ({  deedId, metadata }: any) => {
             color={useColorModeValue("gray.800", "white")}
             letterSpacing={1}
           >
-            {metadata.name}
+            #{deedId} {metadata.name}
           </chakra.h3>
+        </Box>
+        <Box w="sm" >
+          <chakra.span
+            color={useColorModeValue("gray.800", "gray.200")}
+          >
+            {metadata.description}
+          </chakra.span>
         </Box>
       </Flex>
 
-      <Box      
-        roundedRight={"xl"}
+      <Box
+        //roundedRight={"xl"}
         w="full"
-        border="1px"
-        borderStyle="solid"
+        borderRight="1px"
+        //border="1px"
+        //borderStyle="solid"
         borderColor={useColorModeValue('gray.100', 'gray.600')}
-        p={1} 
+        //p={1}
         shadow="md">
 
         <Flex
@@ -73,33 +103,35 @@ export const AuctionCard = ({  deedId, metadata }: any) => {
           justifyContent="space-between"
           py={2}
           px={3}
-          bg={useColorModeValue("gray.200", "gray.700")}
+          //bg={useColorModeValue("gray.200", "gray.700")}
           w="full"
-          roundedRight="xl"
+          //roundedRight="xl"
           h='full'
         >
-          <chakra.span
-            color={useColorModeValue("gray.800", "gray.200")}
-          >
-            {metadata.description}
-          </chakra.span>
-          <chakra.span
-            color={useColorModeValue("gray.800", "gray.200")}
-          >
-            DeedID: {deedId}
-          </chakra.span>
-
-
-            <Box p="4" background="gray.700" borderRadius="xl" width="300px" textAlign="center">
-                <Text color="white" fontSize="8xl">
-                    {0}
+          <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md">
+            {auctionName}
+          </Heading>
+          <chakra.span>{auctionDescription}</chakra.span>
+          <Flex direction={"row"}>
+            <VStack>
+              <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md">
+                Current Bid
+              </Heading>
+              <Box p="4">
+                <Text fontSize="6xl">
+                  {currendBid ? formatEther(currendBid) : 0.0} <chakra.span fontSize={"3xl"}>ETH</chakra.span>
                 </Text>
-            </Box>
+              </Box>
+            </VStack>
 
-          <ButtonGroup variant='outline' spacing='1' pt={2} borderTop="1px" borderColor={bg800}>
+          </Flex>
+
+          <ButtonGroup variant='outline' spacing='1' pt={2}>
 
             <Button
-              bg={bg800}
+              disabled={disabled}
+              onClick={onCancelClick}
+              bg={useColorModeValue('gray.200', 'gray.700')}
               border="1px solid transparent"
               _hover={{
                 border: "1px",

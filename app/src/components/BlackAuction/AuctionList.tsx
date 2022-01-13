@@ -15,18 +15,22 @@ const AuctionList = () => {
 
   const { account } = useEthers()
   const auctions = useAuctionList(account, true)
-
+  console.log(auctions)
   const auctionList = auctions.map(a => ({
+    name: a.name,
+    description: a.metadata,
     deedId: a.tokenId,
     src: toHttpPath(a.metadataURI),
   })).reverse()
 
 
   const imageRenderer = useCallback(
-    ({ deedId, data }) => {
+    ({ auctionName, auctionDescription, deedId, data }) => {
       return (
         <AuctionCard
           deedId={deedId}
+          auctionName={auctionName}
+          auctionDescription={auctionDescription}
           metadata={data}
         />
       )
@@ -63,7 +67,7 @@ const AuctionList = () => {
             <Fetch
               uri={item.src}
               key={i}
-              renderSuccess={(data: any) => imageRenderer({...data, deedId: item.deedId})}
+              renderSuccess={(data: any) => imageRenderer({...data, auctionName:item.name, auctionDescription:item.description, deedId: item.deedId})}
             />
           ))
           : <EmptyDescription>...</EmptyDescription>}
