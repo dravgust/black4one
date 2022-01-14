@@ -18,6 +18,7 @@ const contract = new Contract(contractAddress, contractInterface);
 const tokenContractInterface = new utils.Interface(Config.DEEDREPOSITORY_ABI)
 const tokenContract = new Contract(Config.DEEDREPOSITORY_ADDRESS, tokenContractInterface);
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function useBlackAuctionEvents(eventName: string, account: string | null | undefined = null) {
     return useContractEvents(contract, eventName, account);
 }
@@ -35,7 +36,20 @@ export function useAuctionsOf(address: string | null | undefined) {
     return auctionIds;
 }
 
+export function useCurrentBid(auctionId: number) {
+    const [currentBid] = useContractCall(
+        {
+            abi: contractInterface,
+            address: contractAddress,
+            method: 'getCurrentBid',
+            args: [auctionId],
+        }) ?? []
+    return currentBid;
+}
+
 export function useAuctionsById(auctionIds: number[] | undefined) {
+
+    const [result, setResult] = useState<any[]>([])
     const auctions =
         useContractCalls(
             auctionIds ? auctionIds.map(auctionId => (
@@ -47,21 +61,22 @@ export function useAuctionsById(auctionIds: number[] | undefined) {
                 }
             )) : []
         )
-    return auctions;
+
+    useEffect(() => {
+        auctionIds
+            && auctions
+            && setResult(auctions.map((a: any, i: number) =>
+            (
+                {
+                    id: auctionIds[i],
+                    ...a
+                }
+            )))
+    }, [auctions])
+
+    return result;
 }
 
-export function useCurrentBid(auctionId: number){
-    const [currentBid] = useContractCall(
-        {
-            abi: contractInterface,
-            address: contractAddress,
-            method: 'getCurrentBid',
-            args: [auctionId],
-        }) ?? []
-    return currentBid;
-}
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export function useAuctionList(address: string | null | undefined, activeOnly: boolean = false) {
 
     const [auctionList, setAuctionList] = useState<TokenAuction[]>([])
@@ -85,6 +100,7 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
                             return {
                                 ...a,
                                 tokenId: a.deedId.toNumber(),
+                                auctionId: a.id.toNumber(),
                                 metadataURI
                             }
                         }))
@@ -107,6 +123,6 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
 
 export function useCancelAuction() {
 
-    const {state, send} = useContractMethod(contract, 'cancelAuction')
+    const { state, send } = useContractMethod(contract, 'cancelAuction')
     return { state, send }
 }

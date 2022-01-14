@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
 export class Auction {
+    public id: BigNumber
     public name: string
     public blockDeadline: BigNumber
     public startPrice: BigNumber
@@ -12,6 +13,7 @@ export class Auction {
     public finalized: boolean
 
     constructor(auction: Auction){
+        this.id = auction.id
         this.name = auction.name
         this.blockDeadline = auction.blockDeadline
         this.startPrice = auction.startPrice
@@ -26,6 +28,7 @@ export class Auction {
 }
 
 export class TokenAuction extends Auction {
+    public auctionId: number | null = null
     public tokenId: number | null = null
     public metadataURI: string = ''
 }
