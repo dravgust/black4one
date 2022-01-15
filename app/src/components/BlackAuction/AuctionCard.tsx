@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text, VStack, Heading, HStack } from "@chakra-ui/react"
+import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text, VStack, Heading, HStack, Spacer } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { useCancelAuction, useCurrentBid } from "../../hooks/useAuctionRepository";
 import { formatEther } from '@ethersproject/units';
@@ -97,7 +97,7 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
               #{deedId} {metadata.name}
             </chakra.h3>
           </Box>
-          <Box w="sm" color={useColorModeValue("gray.800", "gray.200")}>
+          <Box w="sm" py={2} h={58} color={useColorModeValue("gray.800", "gray.200")}>
             <chakra.span>
               {metadata.description}
             </chakra.span>
@@ -123,35 +123,37 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
                 {moment(new Date(blockDeadline.toNumber())).format('DD/MM/YYYY HH:mm:ss')}
               </Heading>
             </Box>
-            <Flex 
-              direction={"row"}  
-              justifyContent="center"   
-              width={"full"}>
+            <Flex
+              direction={"row"}
+              justifyContent="center"
+              width={"full"}
+            >
+              <Spacer />
               <VStack>
-                <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md">
+                <Heading fontSize={"calc(12px + 2vmin)"} fontWeight="md">
                   Start Price
                 </Heading>
                 <Box p="4">
                   <Text fontSize="6xl">
-                    {formatEther(startPrice)} <chakra.span fontSize={"3xl"}>ETH</chakra.span>
+                    {formatEther(startPrice)} <chakra.span fontSize={"xl"}>ETH</chakra.span>
                   </Text>
                 </Box>
               </VStack>
+              <Spacer />
               <VStack>
-                <Heading fontSize={"calc(10px + 2vmin)"} fontWeight="md">
+                <Heading fontSize={"calc(12px + 2vmin)"} fontWeight="md">
                   Current Bid
                 </Heading>
                 <Box p="4">
                   <Text fontSize="6xl">
-                    {currendBid ? formatEther(currendBid) : 0.0} <chakra.span fontSize={"3xl"}>ETH</chakra.span>
+                    {currendBid ? formatEther(currendBid) : 0.0} <chakra.span fontSize={"xl"}>ETH</chakra.span>
                   </Text>
                 </Box>
               </VStack>
-
+              <Spacer />
             </Flex>
 
             <ButtonGroup variant='outline' spacing='1' pt={2}>
-
               <Button
                 disabled={disabled}
                 onClick={onCancelClick}
@@ -169,6 +171,23 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
                 height="38px"
               >
                 Cancel Aucion
+              </Button>
+
+              <Button
+                bg={useColorModeValue('gray.200', 'gray.700')}
+                border="1px solid transparent"
+                _hover={{
+                  border: "1px",
+                  borderStyle: "solid",
+                  borderColor: "whiteAlpha.700",
+                  backgroundColor: { bg700 },
+                }}
+                borderRadius="xl"
+                m="1px"
+                px={3}
+                height="38px"
+              >
+                Finalize Aucion
               </Button>
 
             </ButtonGroup>
