@@ -2,9 +2,27 @@ import React, { useEffect, useState } from "react"
 import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text, VStack, Heading, HStack, Spacer } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { useCancelAuction, useCurrentBid } from "../../hooks/useAuctionRepository";
-import { formatEther } from '@ethersproject/units';
+import { formatEther, formatUnits } from '@ethersproject/units';
 import { useEthers } from "@usedapp/core";
 import moment from "moment";
+import { BigNumber } from '@ethersproject/bignumber'
+
+function EtherAmount(amount: BigNumber) {
+  switch(true){
+    case amount.gt(BigNumber.from(1000000000000000)):
+      return [formatUnits(amount,'ether'), 'ETH']
+    case amount.gt(BigNumber.from(1000000000000)):
+      return [formatUnits(amount,'ether'), 'GWei']
+    case amount.gt(BigNumber.from(1000000000)):
+      return [formatUnits(amount,'ether'), 'MWei']
+    case amount.gt(BigNumber.from(1000000)):
+      return [formatUnits(amount,'gwei'), 'GWei']
+      case amount.gt(BigNumber.from(1000)):
+      return [formatUnits(amount,'kwei'), 'KWei']
+    default:
+      return [formatUnits(amount,'wei'), 'Wei']
+  }
+}
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startPrice, blockDeadline, deedId, metadata }: any) => {
@@ -29,6 +47,8 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
       setDisabled(false)
     }
   }, [cancelState])
+
+  const [sPrice, ...sUnits] = EtherAmount(startPrice)
 
   return (
     <VStack mb={5}>
@@ -135,7 +155,7 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
                 </Heading>
                 <Box p="4">
                   <Text fontSize="6xl">
-                    {formatEther(startPrice)} <chakra.span fontSize={"xl"}>ETH</chakra.span>
+                    {sPrice} <chakra.span fontSize={"xl"}>{sUnits}</chakra.span>
                   </Text>
                 </Box>
               </VStack>
