@@ -16,8 +16,6 @@ const AuctionList = () => {
   const { account } = useEthers()
   const auctions = useAuctionList(account, true)
 
-  console.log("[AuctionList]", auctions)
-
   const auctionList = auctions.map(a => ({
     id: a.auctionId,
     name: a.name,

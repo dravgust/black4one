@@ -2,36 +2,46 @@ import React, { useEffect, useState } from "react"
 import { chakra, Button, Flex, Box, useColorModeValue, ButtonGroup, Text, VStack, Heading, HStack, Spacer } from "@chakra-ui/react"
 import { toHttpPath } from "../../utils";
 import { useCancelAuction, useCurrentBid } from "../../hooks/useAuctionRepository";
-import { formatEther, formatUnits } from '@ethersproject/units';
+import { formatUnits } from '@ethersproject/units';
 import { useEthers } from "@usedapp/core";
 import moment from "moment";
 import { BigNumber } from '@ethersproject/bignumber'
+//import useClock from "../../hooks/useClock";
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/*function Clock() {
+  const clock = useClock()
+  return (
+    <>
+      {clock}
+    </>
+  )
+}*/
 
 function EtherAmount(amount: BigNumber) {
-  switch(true){
+  switch (true) {
     case amount.gt(BigNumber.from(1000000000000000)):
-      return [formatUnits(amount,'ether'), 'ETH']
+      return [formatUnits(amount, 'ether'), 'ETH']
     case amount.gt(BigNumber.from(1000000000000)):
-      return [formatUnits(amount,'ether'), 'GWei']
+      return [formatUnits(amount, 'ether'), 'GWei']
     case amount.gt(BigNumber.from(1000000000)):
-      return [formatUnits(amount,'ether'), 'MWei']
+      return [formatUnits(amount, 'ether'), 'MWei']
     case amount.gt(BigNumber.from(1000000)):
-      return [formatUnits(amount,'gwei'), 'GWei']
-      case amount.gt(BigNumber.from(1000)):
-      return [formatUnits(amount,'kwei'), 'KWei']
+      return [formatUnits(amount, 'gwei'), 'GWei']
+    case amount.gt(BigNumber.from(1000)):
+      return [formatUnits(amount, 'kwei'), 'KWei']
     default:
-      return [formatUnits(amount,'wei'), 'Wei']
+      return [formatUnits(amount, 'wei'), 'Wei']
   }
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startPrice, blockDeadline, deedId, metadata }: any) => {
 
   const bg700 = useColorModeValue('gray.200', 'gray.700')
 
   const [disabled, setDisabled] = useState(false)
   const { account } = useEthers()
-  const currendBid = useCurrentBid(auctionId);
+  const currentBid = useCurrentBid(auctionId);
   const { state: cancelState, send: cancelAcution } = useCancelAuction()
 
   const onCancelClick = () => {
@@ -49,6 +59,7 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
   }, [cancelState])
 
   const [sPrice, ...sUnits] = EtherAmount(startPrice)
+  const [cBid, ...cUnits] = currentBid ? EtherAmount(currentBid) : [0.0, '']
 
   return (
     <VStack mb={5}>
@@ -66,7 +77,44 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
           </Text>
         </Box>
         <Box textAlign={"right"} w="full">
+          <ButtonGroup variant='outline' spacing='1' pt={2}>
+            <Button
+              disabled={disabled}
+              onClick={onCancelClick}
+              bg={useColorModeValue('gray.200', 'gray.700')}
+              border="1px solid transparent"
+              _hover={{
+                border: "1px",
+                borderStyle: "solid",
+                borderColor: "whiteAlpha.700",
+                backgroundColor: { bg700 },
+              }}
+              borderRadius="xl"
+              m="1px"
+              px={3}
+              height="38px"
+            >
+              Cancel
+            </Button>
 
+            <Button
+              bg={useColorModeValue('gray.200', 'gray.700')}
+              border="1px solid transparent"
+              _hover={{
+                border: "1px",
+                borderStyle: "solid",
+                borderColor: "whiteAlpha.700",
+                backgroundColor: { bg700 },
+              }}
+              borderRadius="xl"
+              m="1px"
+              px={3}
+              height="38px"
+            >
+              Finalize
+            </Button>
+
+          </ButtonGroup>
         </Box>
       </HStack>
       <Flex w={"full"} shadow="md">
@@ -130,7 +178,7 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
           <Flex
             alignItems="start"
             direction={"column"}
-            justifyContent="space-between"
+            //justifyContent="space-between"
             py={2}
             px={3}
             //bg={useColorModeValue("gray.200", "gray.700")}
@@ -138,7 +186,7 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
             //roundedRight="xl"
             h='full'
           >
-            <Box textAlign={"right"} w={"full"}>
+            <Box textAlign={"right"} w={"full"} pb={25}>
               <Heading fontSize={12}>
                 {moment(new Date(blockDeadline.toNumber())).format('DD/MM/YYYY HH:mm:ss')}
               </Heading>
@@ -166,51 +214,14 @@ export const AuctionCard = ({ auctionId, auctionName, auctionDescription, startP
                 </Heading>
                 <Box p="4">
                   <Text fontSize="6xl">
-                    {currendBid ? formatEther(currendBid) : 0.0} <chakra.span fontSize={"xl"}>ETH</chakra.span>
+                    {cBid} <chakra.span fontSize={"xl"}>{cUnits}</chakra.span>
                   </Text>
                 </Box>
               </VStack>
               <Spacer />
             </Flex>
 
-            <ButtonGroup variant='outline' spacing='1' pt={2}>
-              <Button
-                disabled={disabled}
-                onClick={onCancelClick}
-                bg={useColorModeValue('gray.200', 'gray.700')}
-                border="1px solid transparent"
-                _hover={{
-                  border: "1px",
-                  borderStyle: "solid",
-                  borderColor: "whiteAlpha.700",
-                  backgroundColor: { bg700 },
-                }}
-                borderRadius="xl"
-                m="1px"
-                px={3}
-                height="38px"
-              >
-                Cancel Aucion
-              </Button>
 
-              <Button
-                bg={useColorModeValue('gray.200', 'gray.700')}
-                border="1px solid transparent"
-                _hover={{
-                  border: "1px",
-                  borderStyle: "solid",
-                  borderColor: "whiteAlpha.700",
-                  backgroundColor: { bg700 },
-                }}
-                borderRadius="xl"
-                m="1px"
-                px={3}
-                height="38px"
-              >
-                Finalize Aucion
-              </Button>
-
-            </ButtonGroup>
           </Flex>
         </Box>
       </Flex>
