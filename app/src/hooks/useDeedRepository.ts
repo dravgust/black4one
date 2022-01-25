@@ -12,7 +12,8 @@ import { useContractMethod } from '.';
 
 type TokenProps = {
   tokenId: number,
-  metadataURI: string
+  metadataURI: string,
+  approved: boolean
 }
 
 const contractInterface = new utils.Interface(Config.DEEDREPOSITORY_ABI)
@@ -61,9 +62,11 @@ export const useTokensOfOwner = () => {
                   const tokenList = await Promise.all(range(balance.toNumber()).map(async (i) => {
                       const tokenId = await connectedContract.tokenOfOwnerByIndex(account, i)
                       const metadataURI = await  connectedContract.tokenURI(tokenId)     
+                      const approvedAddress = await connectedContract.getApproved(tokenId)
                       return { 
                           tokenId: tokenId.toNumber(),
-                          metadataURI
+                          metadataURI,
+                          approved: approvedAddress === Config.AUCTIONREPOSITORY_ADDRESS
                        }
                   }))
                   //console.log("[useTokenList] tokenList", tokenList)

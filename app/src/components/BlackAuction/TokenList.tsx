@@ -11,11 +11,12 @@ import { useEthers } from '@usedapp/core'
 import { toHttpPath, } from "../../utils";
 import CreateDeedModal from "./CreateDeedModal";
 import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
+import { useBlackAuctionMethod } from "../../hooks/useAuctionRepository";
 import Config from "../../config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type ApproveDeedProps = {
-  selectedItem: number | undefined,
+  selectedItem: any | undefined,
 };
 
 export const ApproveDeed = ({ selectedItem }: ApproveDeedProps) => {
@@ -27,20 +28,20 @@ export const ApproveDeed = ({ selectedItem }: ApproveDeedProps) => {
   function onClick() {
     if (account) {
       if (selectedItem)
-      approveDeed(Config.AUCTIONREPOSITORY_ADDRESS, selectedItem, { from: account })
+      approveDeed(Config.AUCTIONREPOSITORY_ADDRESS, selectedItem.deedId, { from: account })
       setDisabled(true)
     }
   }
 
   useEffect(() => {
-    console.log("[TransferDeed] state: ", approveDeedState);
+    console.log("[ApproveDeed] state: ", approveDeedState);
     if (approveDeedState.status != 'Mining') {
       setDisabled(false)
     }
   }, [approveDeedState])
 
   return (
-    <Button onClick={onClick} disabled={!account || disabled || !selectedItem}
+    <Button onClick={onClick} disabled={!account || disabled || !selectedItem || selectedItem.approved}
       bg={useColorModeValue('gray.200', 'gray.700')}
       rounded={"xl"}
       border="1px solid transparent"
@@ -52,34 +53,80 @@ export const ApproveDeed = ({ selectedItem }: ApproveDeedProps) => {
   )
 }
 
+type CreateAuctionProps = {
+  selectedItem: any | undefined,
+};
+
+export const CreateAuction = ({selectedItem}: CreateAuctionProps) => {
+  const { account } = useEthers()
+  const [disabled, setDisabled] = useState(false)
+
+  const { state: createAuctionState, send: createAuction } = useBlackAuctionMethod("createAuctionByOwner")
+
+  const auctionTitle = `auction Title`;
+  const auctionMetadata = `auction metadata`;
+  const startingPrice = 0;
+  const blockDeadline = (Date.now() + 1000 * 60 * 5);
+
+  function onClick() {
+    if (account) {
+      if (selectedItem)
+      createAuction(Config.DEEDREPOSITORY_ADDRESS, selectedItem.deedId, auctionTitle, auctionMetadata, startingPrice, blockDeadline, {from: account })
+      setDisabled(true)
+    }
+  }
+
+  useEffect(() => {
+    console.log("[CreateAuction] state: ", createAuctionState);
+    if (createAuctionState.status != 'Mining') {
+      setDisabled(false)
+    }
+  }, [createAuctionState])
+
+  return (
+    <Button onClick={onClick} disabled={!account || disabled || !selectedItem || !selectedItem?.approved}
+      bg={useColorModeValue('gray.200', 'gray.700')}
+      rounded={"xl"}
+      border="1px solid transparent"
+      _hover={{
+        borderColor: "whiteAlpha.700"
+      }}>
+      Create Auction
+    </Button>
+  )
+}
+
 const PureTokenCard = memo(TokenCard, 
   (prevProps, nextProps) => 
   prevProps.photo.deedId === nextProps.photo.deedId 
   && prevProps.selected === nextProps.selected)
 
+
+ /* eslint-disable @typescript-eslint/no-explicit-any */
 const TokenList = () => {
 
   const { account } = useEthers()
   const { isOpen: isCreateDeedOpen, onOpen: onCreateDeedOpen, onClose: onCreateDeedClose } = useDisclosure();
-  const [selectedItem, setSelectedItem] = useState<number>()
+  const [selectedItem, setSelectedItem] = useState<any>()
 
   const tokens = useTokensOfOwner()
   const tokenList = tokens.map(token => ({
     deedId: token.tokenId,
+    approved: token.approved,
     src: toHttpPath(token.metadataURI),
     width: 64,
     height: 64
   })).reverse()
 
-  const onItemSelect = (deedId: number) =>
+  const onItemSelect = (item: any) =>
     (isSelected: boolean) =>
-     setSelectedItem(isSelected ? deedId : undefined) 
+     setSelectedItem(isSelected ? item : undefined) 
 
   const imageRenderer = useCallback(
     ({ index, key, photo, left, top }) => (
       <PureTokenCard
-        onSelect={onItemSelect(photo.deedId)}
-        selected={selectedItem == photo.deedId}
+        onSelect={onItemSelect(photo)}
+        selected={selectedItem?.deedId == photo.deedId}
         index={index}
         key={`${key}_${index}`}
         photo={photo}
@@ -108,6 +155,7 @@ const TokenList = () => {
         </Box>
         <Box textAlign={"right"} w="full">
           <ButtonGroup variant='outline' spacing='1'>
+            <CreateAuction selectedItem={selectedItem} />
             <ApproveDeed selectedItem={selectedItem} />
             <Button onClick={onCreateDeedOpen} disabled={!account}
               bg={useColorModeValue('gray.200', 'gray.700')}

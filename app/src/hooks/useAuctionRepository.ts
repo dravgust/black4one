@@ -22,6 +22,7 @@ const tokenContract = new Contract(Config.DEEDREPOSITORY_ADDRESS, tokenContractI
 export function useBlackAuctionEvents(eventName: string, account: string | null | undefined = null) {
     return useContractEvents(contract, eventName, account);
 }
+export const useBlackAuctionMethod = (methodName: string) => useContractMethod(contract, methodName)
 
 export function useAuctionsOf(address: string | null | undefined) {
     const [auctionIds] =
