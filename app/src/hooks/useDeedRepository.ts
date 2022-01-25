@@ -17,6 +17,7 @@ type TokenProps = {
 
 const contractInterface = new utils.Interface(Config.DEEDREPOSITORY_ABI)
 const contract = new Contract(Config.DEEDREPOSITORY_ADDRESS, contractInterface);
+console.log("[useDeedRepository] contract", contract)
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const useBlackDeedEvents = (eventName: string, ...accountArgs : any) =>  useContractEvents(contract, eventName, ...accountArgs)

@@ -14,30 +14,30 @@ import { useBlackDeedMethod } from "../../hooks/useDeedRepository";
 import Config from "../../config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type TransferDeedProps = {
+type ApproveDeedProps = {
   selectedItem: number | undefined,
 };
 
-export const TransferDeed = ({ selectedItem }: TransferDeedProps) => {
+export const ApproveDeed = ({ selectedItem }: ApproveDeedProps) => {
 
   const { account } = useEthers()
   const [disabled, setDisabled] = useState(false)
-  const { state: transferDeedState, send: transferDeed } = useBlackDeedMethod("transferFrom")
+  const { state: approveDeedState, send: approveDeed } = useBlackDeedMethod("approve")
 
   function onClick() {
     if (account) {
       if (selectedItem)
-        transferDeed(account, Config.AUCTIONREPOSITORY_ADDRESS, selectedItem, { from: account })
+      approveDeed(Config.AUCTIONREPOSITORY_ADDRESS, selectedItem, { from: account })
       setDisabled(true)
     }
   }
 
   useEffect(() => {
-    console.log("[TransferDeed] state: ", transferDeedState);
-    if (transferDeedState.status != 'Mining') {
+    console.log("[TransferDeed] state: ", approveDeedState);
+    if (approveDeedState.status != 'Mining') {
       setDisabled(false)
     }
-  }, [transferDeedState])
+  }, [approveDeedState])
 
   return (
     <Button onClick={onClick} disabled={!account || disabled || !selectedItem}
@@ -47,7 +47,7 @@ export const TransferDeed = ({ selectedItem }: TransferDeedProps) => {
       _hover={{
         borderColor: "whiteAlpha.700"
       }}>
-      Transfer
+      Approve
     </Button>
   )
 }
@@ -108,7 +108,7 @@ const TokenList = () => {
         </Box>
         <Box textAlign={"right"} w="full">
           <ButtonGroup variant='outline' spacing='1'>
-            <TransferDeed selectedItem={selectedItem} />
+            <ApproveDeed selectedItem={selectedItem} />
             <Button onClick={onCreateDeedOpen} disabled={!account}
               bg={useColorModeValue('gray.200', 'gray.700')}
               rounded={"xl"}

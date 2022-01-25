@@ -68,6 +68,17 @@ contract BlackAuctionRepository {
     }
 
     /**
+    * @dev Guarantees this contract is approved for the given deed/token
+    * @param deedRepositoryAddress address of the deed repository to validate from
+    * @param deedId uint256 ID of the deed which has been registered in the deed repository
+    */
+    modifier contractIsDeedApproved(address deedRepositoryAddress, uint256 deedId) {
+        address deedOwner = BlackDeedRepository(deedRepositoryAddress).getApproved(deedId);
+        require(deedOwner == address(this), "REPO: this contract is not approved for the given deed/token");
+        _;
+    }
+
+    /**
     * @dev Disallow payments to this contract directly
     */
     fallback()  external {
@@ -170,7 +181,8 @@ contract BlackAuctionRepository {
     * @param blockDeadline uint is the timestamp in which the auction expires
     * @return bool whether the auction is created
     */
-    function createAuction(address deedRepositoryAddress, uint256 deedId, string memory auctionTitle, string memory metadata, uint256 startPrice, uint blockDeadline) public contractIsDeedOwner(deedRepositoryAddress, deedId) returns(bool) {
+    function createAuction(address deedRepositoryAddress, uint256 deedId, string memory auctionTitle, string memory metadata, uint256 startPrice, uint blockDeadline)
+     public contractIsDeedOwner(deedRepositoryAddress, deedId) returns(bool) {
         uint auctionId = auctions.length;
         Auction memory newAuction;
         newAuction.name = auctionTitle;
@@ -180,6 +192,31 @@ contract BlackAuctionRepository {
         newAuction.deedId = deedId;
         newAuction.deedRepositoryAddress = deedRepositoryAddress;
         newAuction.owner = payable(msg.sender);
+        newAuction.active = true;
+        newAuction.finalized = false;
+        
+        auctions.push(newAuction);        
+        auctionOwner[msg.sender].push(auctionId);
+        
+        emit AuctionCreated(msg.sender, auctionId);
+        return true;
+    }
+
+    function createAuctionByOwner(address deedRepositoryAddress, uint256 deedId, string memory auctionTitle, string memory metadata, uint256 startPrice, uint blockDeadline)
+     public contractIsDeedApproved(deedRepositoryAddress, deedId) returns(bool) {
+        BlackDeedRepository remoteContract = BlackDeedRepository(deedRepositoryAddress);
+        address deedOwner = remoteContract.ownerOf(deedId);
+        remoteContract.transferFrom(deedOwner, address(this), deedId);
+
+        uint auctionId = auctions.length;
+        Auction memory newAuction;
+        newAuction.name = auctionTitle;
+        newAuction.blockDeadline = blockDeadline;
+        newAuction.startPrice = startPrice;
+        newAuction.metadata = metadata;
+        newAuction.deedId = deedId;
+        newAuction.deedRepositoryAddress = deedRepositoryAddress;
+        newAuction.owner = payable(deedOwner);
         newAuction.active = true;
         newAuction.finalized = false;
         
