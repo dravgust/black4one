@@ -87,16 +87,12 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
 
     useEffect(() => {
 
-        const getAuctionData = async (auctions: any[] | undefined) => {
-            if (provider && auctions) {
+        const getAuctionData = async (list: any[] | undefined) => {
+            if (provider && list) {
                 try {
-                    const list = auctions
-                        .filter((a: Auction) => a && (!activeOnly || a.active))
-                        .map(a => ({ ...a }))
-
                     if (list.length > 0) {
                         const connectedContract = tokenContract.connect(provider)
-                        const auctionList = await Promise.all(list.map(async (a: Auction) => {
+                        const aList = await Promise.all(list.map(async (a: Auction) => {
                             const metadataURI = await connectedContract.tokenURI(a.deedId)
                             return {
                                 ...a,
@@ -105,7 +101,9 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
                                 metadataURI
                             }
                         }))
-                        setAuctionList(auctionList)
+                        setAuctionList(aList)
+                    }else if(auctionList.length > 0){
+                        setAuctionList([])
                     }
                 }
                 catch (error) {
@@ -115,7 +113,10 @@ export function useAuctionList(address: string | null | undefined, activeOnly: b
             }
         }
 
-        getAuctionData(auctions)
+        auctions && getAuctionData(
+            auctions
+                .filter((a: Auction) => a && (!activeOnly || a.active))
+                .map(a => ({ ...a })))
 
     }, [provider, address, auctions])
 
